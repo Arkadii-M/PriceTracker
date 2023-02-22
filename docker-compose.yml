@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  rozetkaparserservice:
+    image: ${DOCKER_REGISTRY-}rozetkaparserservice
+    ports:
+        - 5672:5672
+    build:
+      context: .
+      dockerfile: RozetkaParserService/Dockerfile

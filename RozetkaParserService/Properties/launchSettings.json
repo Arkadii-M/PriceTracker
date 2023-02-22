@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "RozetkaParserService": {
+      "commandName": "Project",
+      "commandLineArgs": "-p 5672:5672",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
