@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace GraphQLServer.Models
+namespace GraphQLDto.Subscription
 {
-    public partial class Subscription
+    public class Subscription_QL
     {
         public long SubscriptionId { get; set; }
         public long UserId { get; set; }
         public long ProductId { get; set; }
         public int CheckMinutes { get; set; }
-
-        public virtual Product Product { get; set; } = null!;
-        public virtual User User { get; set; } = null!;
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace GraphQLServer.Models
+namespace GraphQLServer.DbModels
 {
     public partial class PriceTrackerContext : DbContext
     {
@@ -27,7 +27,6 @@ namespace GraphQLServer.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 var conn_string = Environment.GetEnvironmentVariable("PriceTracker_ConnectionString") ?? throw new ArgumentException("Missing env var: PriceTracker_ConnectionString");
                 optionsBuilder.UseSqlServer(conn_string);
             }

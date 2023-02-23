@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GraphQLServer.Models
+namespace GraphQLServer.DbModels
 {
     public partial class History
     {
