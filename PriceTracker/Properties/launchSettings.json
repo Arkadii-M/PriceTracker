@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PriceTracker": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
