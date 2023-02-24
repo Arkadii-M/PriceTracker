@@ -14,5 +14,7 @@ namespace GraphQLDto.History
         public decimal Price { get; set; }
         public bool InStock { get; set; }
 
+        public Product.Product_QL Product { get; set; }
+
     }
 }

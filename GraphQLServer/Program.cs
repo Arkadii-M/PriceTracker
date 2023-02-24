@@ -1,36 +1,45 @@
 using GraphQLServer;
 using GraphQLServer.GraphQL;
-using GraphQLServer.GraphQL.Queries;
 using GraphQLServer.DbModels;
 using GraphQLServer.Services;
+using System.Reflection;
+using GraphQLServer.MapperProfiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+var profiles = new List<AutoMapper.Profile>()
+{
+    new HistoryProfile(),
+    new ProductProfile(),
+    new SellerProfile(),
+    new SubscriptionProfile(),
+    new UpdateProfile(),
+    new UserProfile()
+};
 
 //builder.Services.AddTransient<UserService>();
-builder.Services.AddTransient<IHistoryService,HistoryService>();
+builder.Services
+    .AddTransient<IHistoryService,HistoryService>()
+    .AddTransient<IProductService,ProductService>()
+    .AddTransient<ISellerService,SellerService>()
+    .AddTransient<ISubscriptionService,SubscriptionService>()
+    .AddTransient<IUpdateService,UpdateService>()
+    .AddTransient<IUserService,UserService>();
 
 builder.Services
     .AddDbContextFactory<PriceTrackerContext>()
 //    .AddAutoMapper(config => config.CreateMap<User, GraphQLDto.User.UserPayload_QL>())
-     .AddAutoMapper(config => config.CreateMap<History, GraphQLDto.History.History_QL>())
+     .AddAutoMapper(config => config.AddProfiles(profiles))
 //    .AddDbContext<PriceTrackerContext>()
     .AddGraphQLServer()
     .RegisterDbContext<PriceTrackerContext>(DbContextKind.Synchronized)
-//    .RegisterService<UserService>()
-    //.RegisterService<UpdateService>()
-    //.RegisterService<SubscriptionService>()
-    //.RegisterService<SellerService>()
-//    .RegisterService<ProductService>()
-    .RegisterService<HistoryService>()
-//    .AddQueryType<UserQuery>()
-    //.AddQueryType<UserQuery>();
-    //.AddQueryType<UpdateQuery>()
-    //.AddQueryType<SubscriptionQuery>()
-    //.AddQueryType<SellerQuery>()
-    //.AddQueryType<ProductQuery>();
-    .AddQueryType<HistoryQuery>();
+    .RegisterService<IHistoryService>()
+    .RegisterService<IProductService>()
+    .RegisterService<ISellerService>()
+    .RegisterService<ISubscriptionService>()
+    .RegisterService<IUpdateService>()
+    .RegisterService<IUserService>()
+    .AddQueryType<Query>();
 
 //builder.Services
 //    .AddDbContext<PriceTrackerContext>()

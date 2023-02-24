@@ -1,12 +1,13 @@
-﻿using GraphQLServer.DbModels;
+﻿using GraphQLDto.Subscription;
+using GraphQLServer.DbModels;
 
 namespace GraphQLServer.Services
 {
     public interface ISubscriptionService
     {
-        Subscription AddSubscription(Subscription subscription);
-        Subscription GetSubscriptionById(long id);
-        IQueryable<Subscription> GetAllSubscriptions();
+        Subscription_QL AddSubscription(Subscription_QL subscription);
+        Subscription_QL GetSubscriptionById(long id);
+        IQueryable<Subscription_QL> GetAllSubscriptions();
         void RemoveSubscription(long id);
     }
 }

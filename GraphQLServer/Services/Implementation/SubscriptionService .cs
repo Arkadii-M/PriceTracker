@@ -1,4 +1,7 @@
-﻿using GraphQLServer.DbModels;
+﻿using AutoMapper;
+using GraphQLDto.History;
+using GraphQLDto.Subscription;
+using GraphQLServer.DbModels;
 using Microsoft.EntityFrameworkCore;
 using static HotChocolate.ErrorCodes;
 
@@ -6,10 +9,12 @@ namespace GraphQLServer.Services
 {
     public class SubscriptionService : ISubscriptionService
     {
+        private readonly IMapper _mapper;
         private readonly PriceTrackerContext _dbContext;
 
-        public SubscriptionService(IDbContextFactory<PriceTrackerContext> dbContextFactory)
+        public SubscriptionService(IDbContextFactory<PriceTrackerContext> dbContextFactory, IMapper mapper)
         {
+            _mapper = mapper;
             _dbContext = dbContextFactory.CreateDbContext();
         }
         public ValueTask DisposeAsync()
@@ -17,29 +22,29 @@ namespace GraphQLServer.Services
             return ((IAsyncDisposable)_dbContext).DisposeAsync();
         }
 
-        public Subscription AddSubscription(Subscription subscription)
+        public Subscription_QL AddSubscription(Subscription_QL subscription)
         {
-            _dbContext.Subscriptions.Add(subscription);
+            _dbContext.Subscriptions.Add(_mapper.Map<Subscription>(subscription));
             _dbContext.SaveChanges();
             return subscription;
         }
 
-        public Subscription GetSubscriptionById(long id)
+        public Subscription_QL GetSubscriptionById(long id)
         {
-            return _dbContext.Subscriptions
+            return _mapper.Map< Subscription_QL >( _dbContext.Subscriptions
                 .Include(s => s.User)
                 .Include(s => s.Product)
                     .ThenInclude(p => p.Seller)
-                .FirstOrDefault(s => s.SubscriptionId == id);
+                .FirstOrDefault(s => s.SubscriptionId == id));
         }
 
-        public IQueryable<Subscription> GetAllSubscriptions()
+        public IQueryable<Subscription_QL> GetAllSubscriptions()
         {
-            return _dbContext.Subscriptions
+            return _mapper.ProjectTo<Subscription_QL>(_dbContext.Subscriptions
                 .Include(s => s.User)
                 .Include(s => s.Product)
                     .ThenInclude(p => p.Seller)
-                .AsQueryable();
+                .AsQueryable());
         }
 
         public void RemoveSubscription(long id)

@@ -34,7 +34,8 @@ namespace GraphQLServer.Services
 
         public IQueryable<Product_QL> GetAllProducts()
         {
-            return _mapper.Map<IQueryable<Product_QL>>(_dbContext.Products
+            return _mapper.ProjectTo<Product_QL>(
+                _dbContext.Products
                 .Include(p => p.Seller)
                 .AsQueryable());
         }

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GraphQLDto.Product;
 
 namespace GraphQLDto.Seller
 {
@@ -12,5 +13,7 @@ namespace GraphQLDto.Seller
     {
         public long SellerId { get; set; }
         public string SellerName { get; set; }
+
+        public ICollection<Product_QL> Products { get; set; }
     }
 }

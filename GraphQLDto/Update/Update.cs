@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GraphQLDto.History;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,8 @@ namespace GraphQLDto.Update
         public long SubscriptionId { get; set; }
         public long? HistoryId { get; set; }
         public DateTime ToCheck { get; set; }
+
+        public virtual History_QL? History { get; set; }
+        public virtual Subscription.Subscription_QL Subscription { get; set; }
     }
 }
