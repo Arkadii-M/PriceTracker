@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using GraphQLDto.History;
-using GraphQLDto.Subscription;
+using GraphQLDto;
 using GraphQLServer.DbModels;
 using Microsoft.EntityFrameworkCore;
 using static HotChocolate.ErrorCodes;
@@ -22,25 +21,25 @@ namespace GraphQLServer.Services
             return ((IAsyncDisposable)_dbContext).DisposeAsync();
         }
 
-        public Subscription_QL AddSubscription(Subscription_QL subscription)
+        public SubscriptionQLPayload AddSubscription(SubscriptionQLInput subscription)
         {
             _dbContext.Subscriptions.Add(_mapper.Map<Subscription>(subscription));
             _dbContext.SaveChanges();
-            return subscription;
+            return _mapper.Map<SubscriptionQLPayload>(subscription);
         }
 
-        public Subscription_QL GetSubscriptionById(long id)
+        public SubscriptionQLPayload GetSubscriptionById(long id)
         {
-            return _mapper.Map< Subscription_QL >( _dbContext.Subscriptions
+            return _mapper.Map<SubscriptionQLPayload>( _dbContext.Subscriptions
                 .Include(s => s.User)
                 .Include(s => s.Product)
                     .ThenInclude(p => p.Seller)
                 .FirstOrDefault(s => s.SubscriptionId == id));
         }
 
-        public IQueryable<Subscription_QL> GetAllSubscriptions()
+        public IQueryable<SubscriptionQLPayload> GetAllSubscriptions()
         {
-            return _mapper.ProjectTo<Subscription_QL>(_dbContext.Subscriptions
+            return _mapper.ProjectTo<SubscriptionQLPayload>(_dbContext.Subscriptions
                 .Include(s => s.User)
                 .Include(s => s.Product)
                     .ThenInclude(p => p.Seller)
@@ -57,7 +56,17 @@ namespace GraphQLServer.Services
             }
         }
 
+        public SubscriptionQLPayload UpdateSubscription(SubscriptionQLUpdate subscription)
+        {
+            var sub_db = _dbContext.Subscriptions.FirstOrDefault(sub => sub.SubscriptionId == subscription.SubscriptionId);
 
-
+            if(sub_db != null)
+            {
+                sub_db.ProductId = subscription.ProductId;
+                sub_db.CheckMinutes = subscription.CheckMinutes;
+                _dbContext.SaveChanges();
+            }
+            return _mapper.Map< SubscriptionQLPayload>(sub_db);
+        }
     }
 }

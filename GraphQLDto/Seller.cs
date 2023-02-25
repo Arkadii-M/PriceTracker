@@ -6,13 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GraphQLDto.Product
+namespace GraphQLDto
 {
-    public class Product_QL
+    public record SellerQL
     {
-        public long ProductId { get; set; }
-        public string Link { get; set; }
-        public string Name { get; set; }
         public long SellerId { get; set; }
+        public string SellerName { get; set; }
+
+        public ICollection<ProductQL> Products { get; set; }
     }
+    public record SellerQLInput(string SellerName);
+    public record SellerQLPayload : SellerQL;
 }

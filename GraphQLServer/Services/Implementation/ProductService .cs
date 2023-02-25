@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GraphQLDto.Product;
+using GraphQLDto;
 using Microsoft.EntityFrameworkCore;
 
 namespace GraphQLServer.Services
@@ -18,23 +18,23 @@ namespace GraphQLServer.Services
         {
             return ((IAsyncDisposable)_dbContext).DisposeAsync();
         }
-        public Product_QL AddProduct(Product_QL product)
+        public ProductQLPayload AddProduct(ProductQLInput product)
         {
             _dbContext.Products.Add(_mapper.Map<GraphQLServer.DbModels.Product>(product));
             _dbContext.SaveChanges();
-            return product;
+            return _mapper.Map<ProductQLPayload>(product);
         }
 
-        public Product_QL GetProductById(long id)
+        public ProductQLPayload GetProductById(long id)
         {
-            return _mapper.Map<Product_QL>(_dbContext.Products
+            return _mapper.Map<ProductQLPayload>(_dbContext.Products
                 .Include(p => p.Seller)
                 .FirstOrDefault(p => p.ProductId == id));
         }
 
-        public IQueryable<Product_QL> GetAllProducts()
+        public IQueryable<ProductQLPayload> GetAllProducts()
         {
-            return _mapper.ProjectTo<Product_QL>(
+            return _mapper.ProjectTo<ProductQLPayload>(
                 _dbContext.Products
                 .Include(p => p.Seller)
                 .AsQueryable());

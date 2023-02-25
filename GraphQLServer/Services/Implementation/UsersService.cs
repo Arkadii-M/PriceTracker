@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using GraphQLDto;
-using GraphQLDto.User;
 using GraphQLServer.DbModels;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +16,7 @@ namespace GraphQLServer.Services
             _mapper = mapper;
         }
 
-        public UserPayload_QL CreateUser(UserInput_QL user)
+        public UserQLPayload CreateUser(UserQLInput user)
         {
             throw new NotImplementedException();
         }
@@ -27,9 +26,9 @@ namespace GraphQLServer.Services
             return ((IAsyncDisposable)_dbContext).DisposeAsync();
         }
 
-        public IQueryable<GraphQLDto.User.UserPayload_QL> GetAll()
+        public IQueryable<UserQLPayload> GetAll()
         {
-            return _mapper.ProjectTo<GraphQLDto.User.UserPayload_QL>(_dbContext.Users.AsQueryable());
+            return _mapper.ProjectTo<UserQLPayload>(_dbContext.Users.AsQueryable());
         }
 
         public bool LoginUser()

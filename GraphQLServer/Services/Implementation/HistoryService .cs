@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GraphQLDto.History;
+using GraphQLDto;
 using GraphQLServer.DbModels;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,21 +19,26 @@ namespace GraphQLServer.Services
         {
             return ((IAsyncDisposable)_dbContext).DisposeAsync();
         }
-        public History_QL AddHistory(History_QL history)
+        public HistoryQLPayload AddHistory(HistoryQLInput history)
         {
-            _dbContext.Histories.Add(_mapper.Map<History>(history));
+            //var history_ = _mapper.Map<History>(history);
+            //_dbContext.Histories.Add(_mapper.Map<History>(history));
+            //_dbContext.SaveChanges();
+            //return history;
+            var history_ = _mapper.Map<History>(history);
+            _dbContext.Histories.Add(history_);
             _dbContext.SaveChanges();
-            return history;
+            return _mapper.Map<HistoryQLPayload>(history_);
         }
 
-        public History_QL GetHistoryById(long id)
+        public HistoryQLPayload GetHistoryById(long id)
         {
-            return _mapper.Map<History_QL>(_dbContext.Histories.FirstOrDefault(h => h.HistoryId == id));
+            return _mapper.Map<HistoryQLPayload>(_dbContext.Histories.FirstOrDefault(h => h.HistoryId == id));
         }
 
-        public IQueryable<History_QL> GetAllHistories()
+        public IQueryable<HistoryQLPayload> GetAllHistories()
         {
-            return _mapper.ProjectTo<History_QL>(_dbContext.Histories.AsQueryable());
+            return _mapper.ProjectTo<HistoryQLPayload>(_dbContext.Histories.AsQueryable());
         }
 
         public void RemoveHistory(long id)

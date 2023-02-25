@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GraphQLDto;
 using GraphQLServer.DbModels;
 
 namespace GraphQLServer.MapperProfiles
@@ -7,7 +8,11 @@ namespace GraphQLServer.MapperProfiles
     {
         public ProductProfile()
         {
-            CreateMap<Product, GraphQLDto.Product.Product_QL>().ReverseMap();
+            CreateMap<Product, ProductQL>().ReverseMap();
+            CreateMap<ProductQLInput, ProductQL>().ReverseMap();
+            CreateMap<ProductQLInput, Product>().ReverseMap();
+            CreateMap<ProductQLPayload, ProductQL>().ReverseMap();
+            CreateMap<ProductQLPayload, Product>().ReverseMap();
         }
     }
 }

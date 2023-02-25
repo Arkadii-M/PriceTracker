@@ -1,13 +1,13 @@
-﻿using GraphQLDto.Seller;
+﻿using GraphQLDto;
 using GraphQLServer.DbModels;
 
 namespace GraphQLServer.Services
 {
     public interface ISellerService
     {
-        Seller_QL AddSeller(Seller_QL seller);
-        Seller_QL GetSellerById(long id);
-        IQueryable<Seller_QL> GetAllSellers();
+        SellerQLPayload AddSeller(SellerQLInput seller);
+        SellerQLPayload GetSellerById(long id);
+        IQueryable<SellerQLPayload> GetAllSellers();
         void RemoveSeller(long id);
     }
 }

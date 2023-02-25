@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GraphQLDto;
 using GraphQLServer.DbModels;
 
 namespace GraphQLServer.MapperProfiles
@@ -7,7 +8,11 @@ namespace GraphQLServer.MapperProfiles
     {
         public UpdateProfile()
         {
-            CreateMap<Update, GraphQLDto.Update.Update_QL>().ReverseMap();
+            CreateMap<Update, UpdateQL>().ReverseMap();
+            CreateMap<UpdateQLInput, UpdateQL>().ReverseMap();
+            CreateMap<UpdateQLPayload, UpdateQL>().ReverseMap();
+            CreateMap<UpdateQLPayload, Update>().ReverseMap();
+            CreateMap<UpdateQLPayload, UpdateQLInput>().ReverseMap();
         }
     }
 }

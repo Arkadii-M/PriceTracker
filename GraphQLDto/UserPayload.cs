@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GraphQLDto.User
+namespace GraphQLDto
 {
-    public record UserInput_QL(string Username,string password);
+    public record UserPayloadQL(long UserId, string Username);
 }

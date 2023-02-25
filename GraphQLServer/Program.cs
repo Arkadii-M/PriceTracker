@@ -39,7 +39,9 @@ builder.Services
     .RegisterService<ISubscriptionService>()
     .RegisterService<IUpdateService>()
     .RegisterService<IUserService>()
-    .AddQueryType<Query>();
+    .AddQueryType<Query>()
+    .AddMutationType<Mutation>()
+    .AddFiltering();
 
 //builder.Services
 //    .AddDbContext<PriceTrackerContext>()

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GraphQLDto.Seller;
+using GraphQLDto;
 using GraphQLServer.DbModels;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,21 +20,21 @@ namespace GraphQLServer.Services
             return ((IAsyncDisposable)_dbContext).DisposeAsync();
         }
 
-        public Seller_QL AddSeller(Seller_QL seller)
+        public SellerQLPayload AddSeller(SellerQLInput seller)
         {
             _dbContext.Sellers.Add(_mapper.Map<Seller>(seller));
             _dbContext.SaveChanges();
-            return seller;
+            return _mapper.Map<SellerQLPayload>(seller);
         }
 
-        public Seller_QL GetSellerById(long id)
+        public SellerQLPayload GetSellerById(long id)
         {
-            return _mapper.Map<Seller_QL>(_dbContext.Sellers.FirstOrDefault(s => s.SellerId == id));
+            return _mapper.Map<SellerQLPayload>(_dbContext.Sellers.FirstOrDefault(s => s.SellerId == id));
         }
 
-        public IQueryable<Seller_QL> GetAllSellers()
+        public IQueryable<SellerQLPayload> GetAllSellers()
         {
-            return _mapper.ProjectTo<Seller_QL>(_dbContext.Sellers.AsQueryable());
+            return _mapper.ProjectTo<SellerQLPayload>(_dbContext.Sellers.AsQueryable());
         }
 
         public void RemoveSeller(long id)

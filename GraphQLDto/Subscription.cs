@@ -5,19 +5,21 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GraphQLDto.Product;
-using GraphQLDto.User;
 
-namespace GraphQLDto.Subscription
+namespace GraphQLDto
 {
-    public class Subscription_QL
+    public record SubscriptionQL
     {
         public long SubscriptionId { get; set; }
         public long UserId { get; set; }
         public long ProductId { get; set; }
         public int CheckMinutes { get; set; }
 
-        public virtual Product_QL Product { get; set; }
-        public virtual User_QL User { get; set; }
+        public virtual ProductQL Product { get; set; }
+        public virtual UserQL User { get; set; }
     }
+    public record SubscriptionQLUpdate(long SubscriptionId,long UserId, long ProductId, int CheckMinutes);
+    
+    public record SubscriptionQLInput(long UserId, long ProductId, int CheckMinutes);
+    public record SubscriptionQLPayload : SubscriptionQL;
 }

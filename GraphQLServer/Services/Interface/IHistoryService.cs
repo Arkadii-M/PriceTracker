@@ -1,13 +1,13 @@
-﻿using GraphQLDto.History;
+﻿using GraphQLDto;
 using GraphQLServer.DbModels;
 
 namespace GraphQLServer.Services
 {
     public interface IHistoryService
     {
-        History_QL AddHistory(History_QL history);
-        History_QL GetHistoryById(long id);
-        IQueryable<History_QL> GetAllHistories();
+        HistoryQLPayload AddHistory(HistoryQLInput history);
+        HistoryQLPayload GetHistoryById(long id);
+        IQueryable<HistoryQLPayload> GetAllHistories();
         void RemoveHistory(long id);
     }
 }

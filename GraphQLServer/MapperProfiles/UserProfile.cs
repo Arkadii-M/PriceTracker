@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GraphQLDto.User;
+using GraphQLDto;
 using GraphQLServer.DbModels;
 
 namespace GraphQLServer.MapperProfiles
@@ -8,9 +8,11 @@ namespace GraphQLServer.MapperProfiles
     {
         public UserProfile()
         {
-            CreateMap<User, GraphQLDto.User.UserPayload_QL>();
-            CreateMap<GraphQLDto.User.UserInput_QL, User>();
-            CreateMap<User_QL, User>().ReverseMap();
+            CreateMap<User, UserQL>().ReverseMap();
+            CreateMap<UserQLInput, User>().ReverseMap();
+            CreateMap<UserQLPayload, UserQL>().ReverseMap();
+            CreateMap<UserQLPayload, UserQLInput>().ReverseMap();
+            CreateMap<UserQLPayload, User>().ReverseMap();
         }
     }
 }

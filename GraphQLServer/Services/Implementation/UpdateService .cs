@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using GraphQLDto.History;
-using GraphQLDto.Update;
+using GraphQLDto;
 using GraphQLServer.DbModels;
 using Microsoft.EntityFrameworkCore;
+using static GraphQL.Instrumentation.Metrics;
 
 namespace GraphQLServer.Services
 {
@@ -20,21 +20,21 @@ namespace GraphQLServer.Services
         {
             return ((IAsyncDisposable)_dbContext).DisposeAsync();
         }
-        public Update_QL AddUpdate(Update_QL update)
+        public UpdateQLPayload AddUpdate(UpdateQLInput update)
         {
             _dbContext.Updates.Add(_mapper.Map<Update>(update));
             _dbContext.SaveChanges();
-            return update;
+            return _mapper.Map <UpdateQLPayload> (update);
         }
 
-        public Update_QL GetUpdateById(long id)
+        public UpdateQLPayload GetUpdateById(long id)
         {
-            return _mapper.Map<Update_QL>(_dbContext.Updates.FirstOrDefault(u => u.SubscriptionId == id));
+            return _mapper.Map<UpdateQLPayload>(_dbContext.Updates.FirstOrDefault(u => u.SubscriptionId == id));
         }
 
-        public IQueryable<Update_QL> GetAllUpdates()
+        public IQueryable<UpdateQLPayload> GetAllUpdates()
         {
-            return _mapper.ProjectTo<Update_QL>(_dbContext.Updates.AsQueryable());
+            return _mapper.ProjectTo<UpdateQLPayload>(_dbContext.Updates.AsQueryable());
         }
 
         public void RemoveUpdate(long id)

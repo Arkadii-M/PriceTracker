@@ -6,4 +6,17 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="HotChocolate" Version="13.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="History\" />
+    <Folder Include="Product\" />
+    <Folder Include="Seller\" />
+    <Folder Include="Subscription\" />
+    <Folder Include="Update\" />
+    <Folder Include="User\" />
+  </ItemGroup>
+
 </Project>
