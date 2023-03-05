@@ -4,16 +4,24 @@ using GraphQLServer.DbModels;
 
 namespace GraphQLServer.MapperProfiles
 {
-    public class SubscriptionProfile: Profile
+    public class SubscriptionProfile: ProfileCreator
     {
-        public SubscriptionProfile()
+        public SubscriptionProfile() :
+            base(typeof(Subscription),
+                typeof(SubscriptionQL),
+                typeof(SubscriptionQLInput),
+                typeof(SubscriptionQLPayload),
+                typeof(SubscriptionQLUpdate))
         {
-            CreateMap<Subscription, SubscriptionQL>().ReverseMap();
-            CreateMap<SubscriptionQLInput, Subscription>().ReverseMap();
-            CreateMap<SubscriptionQLPayload, SubscriptionQL>().ReverseMap();
-            CreateMap<SubscriptionQLPayload, SubscriptionQLInput>().ReverseMap();
-            CreateMap<SubscriptionQLPayload, Subscription>().ReverseMap();
         }
+        //public SubscriptionProfile()
+        //{
+        //    CreateMap<Subscription, SubscriptionQL>().ReverseMap();
+        //    CreateMap<SubscriptionQLInput, Subscription>().ReverseMap();
+        //    CreateMap<SubscriptionQLPayload, SubscriptionQL>().ReverseMap();
+        //    CreateMap<SubscriptionQLPayload, SubscriptionQLInput>().ReverseMap();
+        //    CreateMap<SubscriptionQLPayload, Subscription>().ReverseMap();
+        //}
 
     }
 }

@@ -1,0 +1,380 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  history(id: Long!): HistoryQLPayload!
+  histories(where: HistoryQLPayloadFilterInput): [HistoryQLPayload!]!
+  product(id: Long!): ProductQLPayload!
+  products(where: ProductQLPayloadFilterInput): [ProductQLPayload!]!
+  seller(id: Long!): SellerQLPayload!
+  sellers(where: SellerQLPayloadFilterInput): [SellerQLPayload!]!
+  subscription(id: Long!): SubscriptionQLPayload!
+  subscriptions(where: SubscriptionQLPayloadFilterInput): [SubscriptionQLPayload!]!
+  update(id: Long!): UpdateQLPayload!
+  updates(where: UpdateQLPayloadFilterInput): [UpdateQLPayload!]!
+  users(where: UserQLPayloadFilterInput): [UserQLPayload!]!
+  user(id: Long!): UserQLPayload!
+  loginUser(user_data: LoginUserQLInput!): LoginUserQLPayload!
+}
+
+type Mutation {
+  addHistory(history: HistoryQLInput!): HistoryQLPayload!
+  addProduct(product: ProductQLInput!): ProductQLPayload!
+  addSeller(seller: SellerQLInput!): SellerQLPayload!
+  removeSeller: [SellerQLPayload!]!
+  addSubscription(subscription: SubscriptionQLInput!): SubscriptionQLPayload!
+  updateSubscription(subscription: SubscriptionQLUpdateInput! where: SubscriptionQLPayloadFilterInput): SubscriptionQLPayload!
+  addUser(user: CreateUserQLInput!): UserQLPayload!
+}
+
+input HistoryQLPayloadFilterInput {
+  and: [HistoryQLPayloadFilterInput!]
+  or: [HistoryQLPayloadFilterInput!]
+  historyId: LongOperationFilterInput
+  productId: LongOperationFilterInput
+  datetime: DateTimeOperationFilterInput
+  price: DecimalOperationFilterInput
+  inStock: BooleanOperationFilterInput
+  product: ProductQLFilterInput
+}
+
+input ProductQLPayloadFilterInput {
+  and: [ProductQLPayloadFilterInput!]
+  or: [ProductQLPayloadFilterInput!]
+  productId: LongOperationFilterInput
+  link: StringOperationFilterInput
+  name: StringOperationFilterInput
+  sellerId: LongOperationFilterInput
+}
+
+input SellerQLPayloadFilterInput {
+  and: [SellerQLPayloadFilterInput!]
+  or: [SellerQLPayloadFilterInput!]
+  sellerId: LongOperationFilterInput
+  sellerName: StringOperationFilterInput
+  products: ListFilterInputTypeOfProductQLFilterInput
+}
+
+input SubscriptionQLPayloadFilterInput {
+  and: [SubscriptionQLPayloadFilterInput!]
+  or: [SubscriptionQLPayloadFilterInput!]
+  subscriptionId: LongOperationFilterInput
+  userId: LongOperationFilterInput
+  productId: LongOperationFilterInput
+  checkMinutes: IntOperationFilterInput
+  product: ProductQLFilterInput
+  user: UserQLFilterInput
+}
+
+input UpdateQLPayloadFilterInput {
+  and: [UpdateQLPayloadFilterInput!]
+  or: [UpdateQLPayloadFilterInput!]
+  subscriptionId: LongOperationFilterInput
+  historyId: LongOperationFilterInput
+  toCheck: DateTimeOperationFilterInput
+  history: HistoryQLFilterInput
+  subscription: SubscriptionQLFilterInput
+}
+
+input UserQLPayloadFilterInput {
+  and: [UserQLPayloadFilterInput!]
+  or: [UserQLPayloadFilterInput!]
+  userId: LongOperationFilterInput
+  username: StringOperationFilterInput
+  subscriptions: ListFilterInputTypeOfSubscriptionQLFilterInput
+}
+
+input LongOperationFilterInput {
+  eq: Long
+  neq: Long
+  in: [Long]
+  nin: [Long]
+  gt: Long
+  ngt: Long
+  gte: Long
+  ngte: Long
+  lt: Long
+  nlt: Long
+  lte: Long
+  nlte: Long
+}
+
+input DateTimeOperationFilterInput {
+  eq: DateTime
+  neq: DateTime
+  in: [DateTime]
+  nin: [DateTime]
+  gt: DateTime
+  ngt: DateTime
+  gte: DateTime
+  ngte: DateTime
+  lt: DateTime
+  nlt: DateTime
+  lte: DateTime
+  nlte: DateTime
+}
+
+input DecimalOperationFilterInput {
+  eq: Decimal
+  neq: Decimal
+  in: [Decimal]
+  nin: [Decimal]
+  gt: Decimal
+  ngt: Decimal
+  gte: Decimal
+  ngte: Decimal
+  lt: Decimal
+  nlt: Decimal
+  lte: Decimal
+  nlte: Decimal
+}
+
+input BooleanOperationFilterInput {
+  eq: Boolean
+  neq: Boolean
+}
+
+input ProductQLFilterInput {
+  and: [ProductQLFilterInput!]
+  or: [ProductQLFilterInput!]
+  productId: LongOperationFilterInput
+  link: StringOperationFilterInput
+  name: StringOperationFilterInput
+  sellerId: LongOperationFilterInput
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String
+  neq: String
+  contains: String
+  ncontains: String
+  in: [String]
+  nin: [String]
+  startsWith: String
+  nstartsWith: String
+  endsWith: String
+  nendsWith: String
+}
+
+input ListFilterInputTypeOfProductQLFilterInput {
+  all: ProductQLFilterInput
+  none: ProductQLFilterInput
+  some: ProductQLFilterInput
+  any: Boolean
+}
+
+input IntOperationFilterInput {
+  eq: Int
+  neq: Int
+  in: [Int]
+  nin: [Int]
+  gt: Int
+  ngt: Int
+  gte: Int
+  ngte: Int
+  lt: Int
+  nlt: Int
+  lte: Int
+  nlte: Int
+}
+
+input UserQLFilterInput {
+  and: [UserQLFilterInput!]
+  or: [UserQLFilterInput!]
+  userId: LongOperationFilterInput
+  username: StringOperationFilterInput
+  password: ListByteOperationFilterInput
+  salt: StringOperationFilterInput
+  subscriptions: ListFilterInputTypeOfSubscriptionQLFilterInput
+}
+
+input HistoryQLFilterInput {
+  and: [HistoryQLFilterInput!]
+  or: [HistoryQLFilterInput!]
+  historyId: LongOperationFilterInput
+  productId: LongOperationFilterInput
+  datetime: DateTimeOperationFilterInput
+  price: DecimalOperationFilterInput
+  inStock: BooleanOperationFilterInput
+  product: ProductQLFilterInput
+}
+
+input SubscriptionQLFilterInput {
+  and: [SubscriptionQLFilterInput!]
+  or: [SubscriptionQLFilterInput!]
+  subscriptionId: LongOperationFilterInput
+  userId: LongOperationFilterInput
+  productId: LongOperationFilterInput
+  checkMinutes: IntOperationFilterInput
+  product: ProductQLFilterInput
+  user: UserQLFilterInput
+}
+
+input ListFilterInputTypeOfSubscriptionQLFilterInput {
+  all: SubscriptionQLFilterInput
+  none: SubscriptionQLFilterInput
+  some: SubscriptionQLFilterInput
+  any: Boolean
+}
+
+"The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
+scalar Long
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime
+
+"The built-in `Decimal` scalar type."
+scalar Decimal
+
+input ListByteOperationFilterInput {
+  all: ByteOperationFilterInput
+  none: ByteOperationFilterInput
+  some: ByteOperationFilterInput
+  any: Boolean
+}
+
+input ByteOperationFilterInput {
+  eq: Byte
+  neq: Byte
+  in: [Byte]
+  nin: [Byte]
+  gt: Byte
+  ngt: Byte
+  gte: Byte
+  ngte: Byte
+  lt: Byte
+  nlt: Byte
+  lte: Byte
+  nlte: Byte
+}
+
+"The `Byte` scalar type represents non-fractional whole numeric values. Byte can represent values between 0 and 255."
+scalar Byte
+
+type HistoryQLPayload {
+  historyId: Long!
+  productId: Long!
+  datetime: DateTime!
+  price: Decimal!
+  inStock: Boolean!
+  product: ProductQL!
+}
+
+type ProductQLPayload {
+  productId: Long!
+  link: String!
+  name: String!
+  sellerId: Long!
+}
+
+type SellerQLPayload {
+  sellerId: Long!
+  sellerName: String!
+  products: [ProductQL!]!
+}
+
+type SubscriptionQLPayload {
+  subscriptionId: Long!
+  userId: Long!
+  productId: Long!
+  checkMinutes: Int!
+  product: ProductQL!
+  user: UserQL!
+}
+
+type UpdateQLPayload {
+  subscriptionId: Long!
+  historyId: Long
+  toCheck: DateTime!
+  history: HistoryQL
+  subscription: SubscriptionQL!
+}
+
+type UserQLPayload {
+  userId: Long!
+  username: String!
+  subscriptions: [SubscriptionQL!]
+}
+
+type LoginUserQLPayload {
+  username: String!
+  is_login: Boolean!
+  token: String!
+}
+
+input LoginUserQLInput {
+  username: String!
+  password: String!
+}
+
+input HistoryQLInput {
+  productId: Long!
+  datetime: DateTime!
+  price: Decimal!
+  inStock: Boolean!
+}
+
+input ProductQLInput {
+  link: String!
+  name: String!
+  sellerId: Long!
+}
+
+input SellerQLInput {
+  sellerName: String!
+}
+
+input SubscriptionQLInput {
+  userId: Long!
+  productId: Long!
+  checkMinutes: Int!
+}
+
+input SubscriptionQLUpdateInput {
+  subscriptionId: Long!
+  userId: Long!
+  productId: Long!
+  checkMinutes: Int!
+}
+
+input CreateUserQLInput {
+  username: String!
+  password: String!
+}
+
+type SubscriptionQL {
+  subscriptionId: Long!
+  userId: Long!
+  productId: Long!
+  checkMinutes: Int!
+  product: ProductQL!
+  user: UserQL!
+}
+
+type HistoryQL {
+  historyId: Long!
+  productId: Long!
+  datetime: DateTime!
+  price: Decimal!
+  inStock: Boolean!
+  product: ProductQL!
+}
+
+type UserQL {
+  userId: Long!
+  username: String!
+  password: [Byte!]!
+  salt: String!
+  subscriptions: [SubscriptionQL!]!
+}
+
+type ProductQL {
+  productId: Long!
+  link: String!
+  name: String!
+  sellerId: Long!
+}

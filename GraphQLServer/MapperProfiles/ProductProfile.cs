@@ -4,15 +4,22 @@ using GraphQLServer.DbModels;
 
 namespace GraphQLServer.MapperProfiles
 {
-    public class ProductProfile : Profile
+    public class ProductProfile : ProfileCreator
     {
-        public ProductProfile()
+        public ProductProfile():
+            base(typeof(Product),
+                typeof(ProductQL),
+                typeof(ProductQLInput),
+                typeof(ProductQLPayload))
         {
-            CreateMap<Product, ProductQL>().ReverseMap();
-            CreateMap<ProductQLInput, ProductQL>().ReverseMap();
-            CreateMap<ProductQLInput, Product>().ReverseMap();
-            CreateMap<ProductQLPayload, ProductQL>().ReverseMap();
-            CreateMap<ProductQLPayload, Product>().ReverseMap();
         }
+        //public ProductProfile()
+        //{
+        //    CreateMap<Product, ProductQL>().ReverseMap();
+        //    CreateMap<ProductQLInput, ProductQL>().ReverseMap();
+        //    CreateMap<ProductQLInput, Product>().ReverseMap();
+        //    CreateMap<ProductQLPayload, ProductQL>().ReverseMap();
+        //    CreateMap<ProductQLPayload, Product>().ReverseMap();
+        //}
     }
 }

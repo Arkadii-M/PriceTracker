@@ -6,19 +6,12 @@ namespace GraphQLServer.GraphQL
 {
     public class Mutation
     {
-        //private readonly IUserService _userService;
-
-        //public Mutation(IUserService userService)
-        //{
-        //    _userService = userService;
-        //}
-
         // History mutations
         [GraphQLName("addHistory")]
         public HistoryQLPayload AddHistory(HistoryQLInput history, IHistoryService serivice) => serivice.AddHistory(history);
 
-        [GraphQLName("removeHistory")]
-        public void RemoveHistory(long id, IHistoryService serivice) => serivice.RemoveHistory(id);
+        //[GraphQLName("removeHistory")]
+        //public void RemoveHistory(long id, IHistoryService serivice) => serivice.RemoveHistory(id);
 
         // Product mutations
         [GraphQLName("addProduct")]
@@ -47,9 +40,8 @@ namespace GraphQLServer.GraphQL
         public void RemoveSubscription(long id,ISubscriptionService service) => service.RemoveSubscription(id);
 
 
-        //[GraphQLName("users")]
-        //public IQueryable<UserQLPayload> GetAllUsers(IUserService service) => service.GetAll();
-
+        [GraphQLName("addUser")]
+        public UserQLPayload AddUser(CreateUserQLInput user,IUserService service) => service.CreateUser(user);
     }
 
 

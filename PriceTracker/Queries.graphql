@@ -1,0 +1,5 @@
+﻿query all_products_ids{
+  products{
+    productId
+  }
+}

@@ -1,0 +1,10 @@
+mutation AddHistory($history: HistoryQLInput!)
+{
+  addHistory(history: $history) {
+    historyId
+    productId
+    datetime
+    price
+    inStock
+  }
+}

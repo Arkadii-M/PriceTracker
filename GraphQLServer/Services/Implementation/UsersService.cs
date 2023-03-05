@@ -16,7 +16,7 @@ namespace GraphQLServer.Services
             _mapper = mapper;
         }
 
-        public UserQLPayload CreateUser(UserQLInput user)
+        public UserQLPayload CreateUser(CreateUserQLInput user)
         {
             throw new NotImplementedException();
         }
@@ -31,9 +31,16 @@ namespace GraphQLServer.Services
             return _mapper.ProjectTo<UserQLPayload>(_dbContext.Users.AsQueryable());
         }
 
-        public bool LoginUser()
+        public UserQLPayload GetUserById(long id)
         {
-            throw new NotImplementedException();
+            return _mapper.Map<UserQLPayload>(_dbContext.Users
+                .Include(s => s.Subscriptions)
+                .FirstOrDefault(cond => cond.UserId == id));
+        }
+
+        public LoginUserQLPayload LoginUser(LoginUserQLInput user_data)
+        {
+            return new LoginUserQLPayload(user_data.Username, true, "jwt_token");
         }
     }
 }

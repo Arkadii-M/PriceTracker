@@ -4,16 +4,23 @@ using GraphQLServer.DbModels;
 
 namespace GraphQLServer.MapperProfiles
 {
-    public class SellerProfile : Profile
+    public class SellerProfile : ProfileCreator
     {
-        public SellerProfile()
+        public SellerProfile() :
+            base(typeof(Seller),
+                typeof(SellerQL),
+                typeof(SellerQLInput),
+                typeof(SellerQLPayload))
         {
-            CreateMap<Seller, SellerQL>().ReverseMap();
-            CreateMap<SellerQLInput, Seller>().ReverseMap();
-            CreateMap<SellerQLInput, SellerQL>().ReverseMap();
-            CreateMap<SellerQLPayload, SellerQL>().ReverseMap();
-            CreateMap<SellerQLPayload, Seller>().ReverseMap();
-            CreateMap<SellerQLPayload, SellerQLInput>().ReverseMap();
         }
+        //public SellerProfile()
+        //{
+        //    CreateMap<Seller, SellerQL>().ReverseMap();
+        //    CreateMap<SellerQLInput, Seller>().ReverseMap();
+        //    CreateMap<SellerQLInput, SellerQL>().ReverseMap();
+        //    CreateMap<SellerQLPayload, SellerQL>().ReverseMap();
+        //    CreateMap<SellerQLPayload, Seller>().ReverseMap();
+        //    CreateMap<SellerQLPayload, SellerQLInput>().ReverseMap();
+        //}
     }
 }

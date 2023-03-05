@@ -1,10 +1,88 @@
 version: '3.4'
 
+#services:
+#  graphqlserver:
+#    image: ${DOCKER_REGISTRY-}graphqlserver
+#    build:
+#      context: .
+#      dockerfile: GraphQLServer/Dockerfile
+
+
+networks:
+  backend_net:
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24
+
 services:
+  graphqlserver:
+    image: ${DOCKER_REGISTRY-}graphqlserver
+    ports:
+      - "8080:80"
+    networks:
+      backend_net:
+        ipv4_address: 192.168.0.2
+    environment:
+      PriceTracker_ConnectionString: "Server=ms_sql;Database=PriceTracker;User=sa;Password=ms_sql_ROOT_password_25662735;"
+    build:
+      context: .
+      dockerfile: GraphQLServer/Dockerfile
+    depends_on:
+      - ms_sql
+      
+  ms_sql:
+   image: mcr.microsoft.com/mssql/server:2022-latest
+   ports:
+     - 1433:1433
+   networks:
+     backend_net:
+      ipv4_address: 192.168.0.3
+   environment:
+    ACCEPT_EULA: "Y"
+    MSSQL_SA_PASSWORD: ms_sql_ROOT_password_25662735
+
+
   rozetkaparserservice:
     image: ${DOCKER_REGISTRY-}rozetkaparserservice
-    ports:
-        - 5672:5672
+    networks:
+      backend_net:
+        ipv4_address: 192.168.0.4
+
+    environment:
+      RabbitMqHost: "192.168.0.5"
+      InputQueueName: "PARSER_INPUT_QUEUE"
+      OutputQueueName: "CONSUMER_INPUT_QUEUE"
+
     build:
       context: .
       dockerfile: RozetkaParserService/Dockerfile
+    depends_on:
+      - rabbit_mq
+
+  rabbit_mq:
+    image: rabbitmq:3.11-management
+    ports:
+     - 5672:5672
+     - 15672:15672
+    networks:
+      backend_net:
+       ipv4_address: 192.168.0.5
+
+  dataconsumer:
+    image: ${DOCKER_REGISTRY-}dataconsumer
+    networks:
+      backend_net:
+       ipv4_address: 192.168.0.6
+
+    build:
+      context: .
+      dockerfile: DataConsumer/Dockerfile
+    environment:
+      RabbitMqHost: "192.168.0.5"
+      InputQueueName: "CONSUMER_INPUT_QUEUE"
+      GraphQlServerAddress: "http://192.168.0.2:80/graphql"
+
+    depends_on:
+      - rabbit_mq
+      - graphqlserver
+

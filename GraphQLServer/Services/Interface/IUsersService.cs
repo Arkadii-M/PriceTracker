@@ -5,8 +5,9 @@ namespace GraphQLServer.Services
 {
     public interface IUserService
     {
-        bool LoginUser();
-        UserQLPayload CreateUser(UserQLInput user);
+        LoginUserQLPayload LoginUser(LoginUserQLInput user_data);
+        UserQLPayload GetUserById(long id);
+        UserQLPayload CreateUser(CreateUserQLInput user);
         IQueryable<UserQLPayload> GetAll();
     }
 }

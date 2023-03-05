@@ -8,7 +8,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <GraphQL Remove="Queries.graphql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Queries.graphql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Queries.graphql">
+      <GraphQL>true</GraphQL>
+    </AdditionalFiles>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GraphQLDto\GraphQLDto.csproj" />
+    <ProjectReference Include="..\RozetkaDto\RozetkaDto.csproj" />
   </ItemGroup>
 
 </Project>

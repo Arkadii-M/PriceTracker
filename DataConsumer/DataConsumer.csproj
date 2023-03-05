@@ -1,23 +1,24 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>dotnet-RozetkaParserService-9693824C-6EE6-4123-895A-DEC92F0817A6</UserSecretsId>
+    <UserSecretsId>dotnet-DataConsumer-610DCF3B-5879-481A-BB8C-6720E78BEEF3</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\PriceTracker</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.8.1" />
-    <PackageReference Include="WebDriverManager" Version="2.16.2" />
+    <PackageReference Include="StrawberryShake" Version="13.0.5" />
+    <PackageReference Include="StrawberryShake.Server" Version="13.0.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GraphQLDto\GraphQLDto.csproj" />
     <ProjectReference Include="..\RozetkaDto\RozetkaDto.csproj" />
   </ItemGroup>
 </Project>
