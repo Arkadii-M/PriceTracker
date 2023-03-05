@@ -1,0 +1,7 @@
+mutation AddSeller($seller: SellerQLInput!)
+{
+  addSeller(seller: $seller){
+    sellerId
+    sellerName
+  }
+}

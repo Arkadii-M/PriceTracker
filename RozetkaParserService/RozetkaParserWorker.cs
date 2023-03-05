@@ -16,48 +16,48 @@ namespace RozetkaParserService
     public class RozetkaParserWorker : BackgroundService
     {
         private readonly ILogger<RozetkaParserWorker> _logger;
-        //RabbitMQ
-        private readonly string in_queue_name = "parse_service_input";
-        private readonly string out_queue_name = "parse_service_output";
-        private readonly string host_name = "parse_service_output";
+        //RabbitMq
 
-        //private const string tracker_in_name = "to_parse_url";
-        //private const string tracker_out_name = "to_add_to_database";
+        //// Envrimoment variables
+        private readonly string host_name;
+        // Exchange key
+        private readonly string parser_exchange_key;
+        private readonly string consumer_exchange_key;
+
         private readonly ConnectionFactory factory;
         private readonly IConnection connection;
         private readonly IModel channel;
-        private EventingBasicConsumer consumer;
+
+        private EventingBasicConsumer parse_consumer;
+
 
         public RozetkaParserWorker(ILogger<RozetkaParserWorker> logger)
         {
             _logger = logger;
             // parse envrimoment variables
             host_name = Environment.GetEnvironmentVariable("RabbitMqHost") ?? throw new ArgumentException("Missing env var: RabbitMqHost");
-            in_queue_name = Environment.GetEnvironmentVariable("InputQueueName") ?? throw new ArgumentException("Missing env var: InputQueueName");
-            out_queue_name = Environment.GetEnvironmentVariable("OutputQueueName") ?? throw new ArgumentException("Missing env var: OutputQueueName");
 
+            parser_exchange_key = Environment.GetEnvironmentVariable("ParserExchangeKey") ?? throw new ArgumentException("Missing env var: ParserExchangeKey");
+            consumer_exchange_key = Environment.GetEnvironmentVariable("ConsumerExchangeKey") ?? throw new ArgumentException("Missing env var: ConsumerExchangeKey");
 
             factory = new ConnectionFactory { HostName = host_name };
-            try
-            {
-                connection = factory.CreateConnection();
-                channel = connection.CreateModel();
+            connection = factory.CreateConnection();
+            channel = connection.CreateModel();
 
-                channel.QueueDeclare(queue: in_queue_name,
-                    durable: false,
-                    exclusive: false,
-                    autoDelete: false,
-                    arguments: null);
-                channel.QueueDeclare(queue: out_queue_name,
-                    durable: false,
-                    exclusive: false,
-                    autoDelete: false,
-                    arguments: null);
-            }
-           catch (Exception e)
-            {
-                _logger.LogError(e.Message);
-            }
+            // Declare two exchanges
+            channel.ExchangeDeclare(exchange: parser_exchange_key, type: ExchangeType.Direct);
+            channel.ExchangeDeclare(exchange: consumer_exchange_key, type: ExchangeType.Direct);
+
+            // declare a parser-named queue. The name is not crucial, so Rabbitmq will generate one.
+            var queueName = channel.QueueDeclare().QueueName;
+
+            channel.QueueBind(queue: queueName, exchange: parser_exchange_key, routingKey: String.Empty);// no routing key
+
+            parse_consumer = new EventingBasicConsumer(channel);
+            parse_consumer.Received += OnItemRecived;
+            channel.BasicConsume(queue: queueName, autoAck: true, consumer: parse_consumer);
+
+
         }
         //private void ParseUrl(string url,out RozetkaPageResult info)
         //{
@@ -109,6 +109,25 @@ namespace RozetkaParserService
         //        _logger.LogError(exception.Message);
         //    }
         //}
+
+        private void OnItemRecived(object? sender, BasicDeliverEventArgs e)
+        {
+
+            RozetkaPageResult out_info;
+            var product_input = JsonConvert.DeserializeObject<RozetkaParseInput>(Encoding.UTF8.GetString(e.Body.ToArray()));
+
+
+            ParseProduct(product_input, out out_info);
+
+            out_info.id = product_input.id; // save the id
+            out_info.url = product_input.url;
+
+            channel.BasicPublish(
+                exchange: consumer_exchange_key,
+                routingKey: product_input.routing_key,
+                basicProperties: null,
+                body: Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(out_info)));
+        }
         private void ParseProduct(RozetkaParseInput product, out RozetkaPageResult info)
         {
             _logger.LogInformation("Recived url: {url}", product.url);
@@ -122,7 +141,8 @@ namespace RozetkaParserService
             var rozetka_parser = new RozetkaParser(driver);
             var procuct_page = rozetka_parser.GetProductPageByUrl(product.url);
             info = procuct_page.ParsePage();
-            _logger.LogInformation("Title: {title}, price: {price}, datetime {datetime}, in stock: {in_stock}",
+
+            _logger.LogInformation("Page parsed with data:\nTitle: {title}, price: {price}, datetime {datetime}, in stock: {in_stock}",
                 info.product_title,
                 info.price,
                 info.datetime,
@@ -134,25 +154,6 @@ namespace RozetkaParserService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Run(() =>
-                {
-                    consumer = new EventingBasicConsumer(channel);
-                    consumer.Received += (sender, e) =>
-                    {
-                        RozetkaPageResult out_info;
-                        var product_input = JsonConvert.DeserializeObject<RozetkaParseInput>(Encoding.UTF8.GetString(e.Body.ToArray()));
-
-                        ParseProduct(product_input, out out_info);
-                        channel.BasicPublish(
-                            exchange: string.Empty,
-                            routingKey: out_queue_name,
-                            basicProperties: null,
-                            body: Encoding.UTF8.GetBytes(
-                                JsonConvert.SerializeObject(out_info)
-                                ));
-                    };
-                    channel.BasicConsume(in_queue_name, true, consumer);
-                });
                 //_logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 await Task.Delay(1000, stoppingToken);
             }

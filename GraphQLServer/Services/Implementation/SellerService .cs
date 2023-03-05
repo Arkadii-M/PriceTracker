@@ -22,9 +22,10 @@ namespace GraphQLServer.Services
 
         public SellerQLPayload AddSeller(SellerQLInput seller)
         {
-            _dbContext.Sellers.Add(_mapper.Map<Seller>(seller));
+            var db_seller = _mapper.Map<Seller>(seller);
+            _dbContext.Sellers.Add(db_seller);
             _dbContext.SaveChanges();
-            return _mapper.Map<SellerQLPayload>(seller);
+            return _mapper.Map<SellerQLPayload>(db_seller);
         }
 
         public SellerQLPayload GetSellerById(long id)

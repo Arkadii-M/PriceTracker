@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace RozetkaDto
 {
-    public record RozetkaParseInput(string url);
+    public record RozetkaParseInput(string url,long? id,string routing_key);
 }

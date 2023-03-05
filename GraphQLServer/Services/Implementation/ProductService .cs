@@ -20,9 +20,10 @@ namespace GraphQLServer.Services
         }
         public ProductQLPayload AddProduct(ProductQLInput product)
         {
-            _dbContext.Products.Add(_mapper.Map<GraphQLServer.DbModels.Product>(product));
+            var db_product = _mapper.Map<GraphQLServer.DbModels.Product>(product);
+            _dbContext.Products.Add(db_product);
             _dbContext.SaveChanges();
-            return _mapper.Map<ProductQLPayload>(product);
+            return _mapper.Map<ProductQLPayload>(db_product);
         }
 
         public ProductQLPayload GetProductById(long id)

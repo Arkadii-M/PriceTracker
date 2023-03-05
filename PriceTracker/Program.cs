@@ -1,4 +1,41 @@
-﻿using System.Text;
+﻿//using System.Text;
+//using RabbitMQ.Client;
+//using GraphQLDto;
+//using Newtonsoft.Json;
+//using RozetkaDto;
+
+//var factory = new ConnectionFactory { HostName = "localhost" };
+
+//using var connection = factory.CreateConnection();
+//using var channel = connection.CreateModel();
+
+//const string quenue_name = "PARSER_INPUT_QUEUE";
+
+//channel.QueueDeclare(queue: quenue_name,
+//                     durable: false,
+//                     exclusive: false,
+//                     autoDelete: false,
+//                     arguments: null);
+
+//const string url_ = "https://rozetka.com.ua/ua/bosch_0092s50050/p59504740/";
+
+//RozetkaParseInput product = new RozetkaParseInput(url_);
+
+//string message = JsonConvert.SerializeObject(product);
+
+//var body = Encoding.UTF8.GetBytes(message);
+
+//channel.BasicPublish(exchange: string.Empty,
+//                     routingKey: quenue_name,
+//                     basicProperties: null,
+//                     body: body);
+
+//Console.WriteLine($" [x] Sent {message}");
+
+//Console.WriteLine(" Press [enter] to exit.");
+//Console.ReadLine();
+
+using System.Text;
 using RabbitMQ.Client;
 using GraphQLDto;
 using Newtonsoft.Json;
@@ -9,24 +46,20 @@ var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
-const string quenue_name = "PARSER_INPUT_QUEUE";
+const string exchange_key = "PARSER";
 
-channel.QueueDeclare(queue: quenue_name,
-                     durable: false,
-                     exclusive: false,
-                     autoDelete: false,
-                     arguments: null);
+channel.ExchangeDeclare(exchange: exchange_key, type: ExchangeType.Direct);
 
 const string url_ = "https://rozetka.com.ua/ua/bosch_0092s50050/p59504740/";
 
-RozetkaParseInput product = new RozetkaParseInput(url_);
+RozetkaParseInput product = new RozetkaParseInput(url_,null, "NEW_ITEM");
 
 string message = JsonConvert.SerializeObject(product);
 
 var body = Encoding.UTF8.GetBytes(message);
 
-channel.BasicPublish(exchange: string.Empty,
-                     routingKey: quenue_name,
+channel.BasicPublish(exchange: exchange_key,
+                     routingKey: string.Empty,
                      basicProperties: null,
                      body: body);
 
@@ -34,4 +67,5 @@ Console.WriteLine($" [x] Sent {message}");
 
 Console.WriteLine(" Press [enter] to exit.");
 Console.ReadLine();
+
 

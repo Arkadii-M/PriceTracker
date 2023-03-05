@@ -16,6 +16,7 @@ networks:
 
 services:
   graphqlserver:
+    container_name: graph-ql-server
     image: ${DOCKER_REGISTRY-}graphqlserver
     ports:
       - "8080:80"
@@ -40,18 +41,23 @@ services:
    environment:
     ACCEPT_EULA: "Y"
     MSSQL_SA_PASSWORD: ms_sql_ROOT_password_25662735
+   volumes:
+      - "./data/:/var/opt/mssql/data/"
+      - "./log/:/var/opt/mssql/log/"
+      - "./secrets/:/var/opt/mssql/secrets/"
 
 
   rozetkaparserservice:
+    container_name: rozetka-product-parser
     image: ${DOCKER_REGISTRY-}rozetkaparserservice
     networks:
       backend_net:
         ipv4_address: 192.168.0.4
 
     environment:
+      ConsumerExchangeKey: "CONSUMER"
+      ParserExchangeKey: "PARSER"
       RabbitMqHost: "192.168.0.5"
-      InputQueueName: "PARSER_INPUT_QUEUE"
-      OutputQueueName: "CONSUMER_INPUT_QUEUE"
 
     build:
       context: .
@@ -69,6 +75,7 @@ services:
        ipv4_address: 192.168.0.5
 
   dataconsumer:
+    container_name: data-consumer
     image: ${DOCKER_REGISTRY-}dataconsumer
     networks:
       backend_net:
@@ -78,6 +85,9 @@ services:
       context: .
       dockerfile: DataConsumer/Dockerfile
     environment:
+      ConsumerExchangeKey: "CONSUMER"
+      NewItemRoutingKey: "NEW_ITEM"
+      UpdateItemRoutingKey: "UPDATE_ITEM"
       RabbitMqHost: "192.168.0.5"
       InputQueueName: "CONSUMER_INPUT_QUEUE"
       GraphQlServerAddress: "http://192.168.0.2:80/graphql"

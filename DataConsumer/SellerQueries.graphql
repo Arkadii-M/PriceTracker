@@ -1,0 +1,7 @@
+query GetAllSellers
+{
+  sellers{
+    sellerId,
+    sellerName
+  }
+}
