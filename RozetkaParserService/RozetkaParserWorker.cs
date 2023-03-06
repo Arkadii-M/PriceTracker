@@ -7,9 +7,8 @@ using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium;
 using AngleSharp.Text;
 using System.Text.RegularExpressions;
-using RozetkaDto;
 using Newtonsoft.Json;
-using GraphQLDto;
+using DTO.Rozetka;
 
 namespace RozetkaParserService
 {

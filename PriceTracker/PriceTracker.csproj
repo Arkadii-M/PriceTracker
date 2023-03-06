@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GraphQLDto\GraphQLDto.csproj" />
     <ProjectReference Include="..\RozetkaDto\RozetkaDto.csproj" />
   </ItemGroup>
 

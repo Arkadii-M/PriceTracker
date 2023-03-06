@@ -1,6 +1,5 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using RozetkaDto;
 using System.Text;
 using Newtonsoft.Json;
 using StrawberryShake;
@@ -9,6 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using DataConsumer.State;
+using DTO.Rozetka;
 
 namespace DataConsumer
 {

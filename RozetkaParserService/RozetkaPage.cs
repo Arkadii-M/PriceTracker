@@ -1,6 +1,6 @@
-﻿using OpenQA.Selenium;
+﻿using DTO.Rozetka;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using RozetkaDto;
 using System;
 using System.Collections.Generic;
 using System.Linq;

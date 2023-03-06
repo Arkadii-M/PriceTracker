@@ -14,13 +14,4 @@ IHost host = Host.CreateDefaultBuilder(args)
     .Build();
 
 
-//var serviceCollection = new ServiceCollection();
-
-//serviceCollection
-//    .AddCryptoClient()
-//    .ConfigureHttpClient(client => client.BaseAddress = new Uri("https://api-crypto-workshop.chillicream.com/graphql"));
-
-//IServiceProvider services = serviceCollection.BuildServiceProvider();
-
-
 await host.RunAsync();

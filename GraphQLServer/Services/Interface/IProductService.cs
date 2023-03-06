@@ -1,4 +1,4 @@
-﻿using GraphQLDto;
+﻿using DTO.GraphQL;
 
 namespace GraphQLServer.Services
 {

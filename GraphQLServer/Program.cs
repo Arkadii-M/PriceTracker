@@ -17,7 +17,7 @@ var profiles = new List<AutoMapper.Profile>()
     new UserProfile()
 };
 
-//builder.Services.AddTransient<UserService>();
+
 builder.Services
     .AddTransient<IHistoryService,HistoryService>()
     .AddTransient<IProductService,ProductService>()
@@ -28,9 +28,7 @@ builder.Services
 
 builder.Services
     .AddDbContextFactory<PriceTrackerContext>()
-//    .AddAutoMapper(config => config.CreateMap<User, GraphQLDto.User.UserPayload_QL>())
-     .AddAutoMapper(config => config.AddProfiles(profiles))
-//    .AddDbContext<PriceTrackerContext>()
+    .AddAutoMapper(config => config.AddProfiles(profiles))
     .AddGraphQLServer()
     .RegisterDbContext<PriceTrackerContext>(DbContextKind.Synchronized)
     .RegisterService<IHistoryService>()
@@ -43,25 +41,10 @@ builder.Services
     .AddMutationType<Mutation>()
     .AddFiltering();
 
-//builder.Services
-//    .AddDbContext<PriceTrackerContext>()
-//    .AddTransient<UsersService>()
-//    .AddGraphQLServer()
-//    .RegisterService<UsersService>()
-//    .AddQueryType<Query>();
-
-//builder.Services
-//    .AddScoped<IUserService,UsersService>()
-//    .AddDbContext<PriceTrackerContext>()
-//    .AddGraphQLServer()
-//    .RegisterDbContext<PriceTrackerContext>(DbContextKind.Synchronized)
-//    .AddQueryType<Query>()
-//    .AddMutationType<Mutation>();
-
 var app = builder.Build();
 
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "GraphQl is avaliable at /graphql");
 
 
 app.MapGraphQL();

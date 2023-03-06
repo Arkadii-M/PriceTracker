@@ -1,4 +1,4 @@
-﻿using GraphQLDto;
+﻿using DTO.GraphQL;
 using GraphQLServer.Services;
 using UseFilteringAttribute = HotChocolate.Data.UseFilteringAttribute;
 

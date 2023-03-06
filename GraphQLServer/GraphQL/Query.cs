@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GraphQLDto;
+using DTO.GraphQL;
 using GraphQLServer.DbModels;
 using GraphQLServer.Services;
 using HotChocolate;

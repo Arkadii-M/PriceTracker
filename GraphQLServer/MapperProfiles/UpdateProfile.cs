@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GraphQLDto;
+using DTO.GraphQL;
 using GraphQLServer.DbModels;
 
 namespace GraphQLServer.MapperProfiles
@@ -13,13 +13,5 @@ namespace GraphQLServer.MapperProfiles
                 typeof(UpdateQLPayload))
         {
         }
-        //public UpdateProfile()
-        //{
-        //    CreateMap<Update, UpdateQL>().ReverseMap();
-        //    CreateMap<UpdateQLInput, UpdateQL>().ReverseMap();
-        //    CreateMap<UpdateQLPayload, UpdateQL>().ReverseMap();
-        //    CreateMap<UpdateQLPayload, Update>().ReverseMap();
-        //    CreateMap<UpdateQLPayload, UpdateQLInput>().ReverseMap();
-        //}
     }
 }

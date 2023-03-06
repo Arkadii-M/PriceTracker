@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GraphQLDto;
+using DTO.GraphQL;
 using Microsoft.EntityFrameworkCore;
 
 namespace GraphQLServer.Services
