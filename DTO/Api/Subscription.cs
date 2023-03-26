@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DTO.GraphQL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,8 @@ namespace DTO.Api
         public long UserId { get; set; }
         public long ProductId { get; set; }
         public int CheckMinutes { get; set; }
+
+
+        public Product? Product { get; set; }
     }
 }

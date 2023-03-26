@@ -18,6 +18,8 @@ var profiles = new List<AutoMapper.Profile>()
 };
 
 
+//builder.Services.AddHealthChecks();
+
 builder.Services
     .AddTransient<IHistoryService,HistoryService>()
     .AddTransient<IProductService,ProductService>()
@@ -45,7 +47,8 @@ var app = builder.Build();
 
 
 app.MapGet("/", () => "GraphQl is avaliable at /graphql");
-
+app.MapGet("/healthcheck", () => "Ok");
+//app.MapHealthChecks("/healthcheck");
 
 app.MapGraphQL();
 

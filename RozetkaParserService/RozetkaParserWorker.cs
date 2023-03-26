@@ -121,6 +121,7 @@ namespace RozetkaParserService
             out_info.id = product_input.id; // save the id
             out_info.url = product_input.url;
 
+
             channel.BasicPublish(
                 exchange: consumer_exchange_key,
                 routingKey: product_input.routing_key,

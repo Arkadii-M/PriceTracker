@@ -1,0 +1,48 @@
+query GetAllProducts
+{
+  products{
+    productId,
+    link,
+    name,
+    sellerId
+  }
+}
+
+query GetProductById($id: Long!)
+{
+  product(id: $id){
+    productId,
+    link,
+    name,
+    sellerId
+  }
+}
+
+query GetProdctByUrl($url : String!)
+{
+  products(where: {link: {eq:$url}})
+  {
+    productId,
+    link,
+    name,
+    sellerId
+  }
+}
+
+query GetProductPriceHisrory($id: Long!)
+{
+  product(id: $id){
+    productId,
+    link,
+    name,
+    sellerId
+  }
+  histories(where: {productId: {eq:$id}})
+  {
+    historyId
+    price
+    datetime
+    productId
+    inStock
+  }
+}

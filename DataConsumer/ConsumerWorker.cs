@@ -62,23 +62,33 @@ namespace DataConsumer
             channel.ExchangeDeclare(exchange: consumer_exchange_key, type: ExchangeType.Direct);
 
             // declare a consumer-named queue. The name is not crucial, so Rabbitmq will generate one.
-            var queueName = channel.QueueDeclare().QueueName;
+            var newItemQueueName = channel.QueueDeclare().QueueName;
+            var updateItemQueueName = channel.QueueDeclare().QueueName;
+            _logger.LogInformation("Create queue with name: {name}", newItemQueueName);
+            _logger.LogInformation("Create queue with name: {name}", updateItemQueueName);
 
             // Bind two (new, update) queues
-            channel.QueueBind(queue: queueName, exchange: consumer_exchange_key, routingKey: new_item_routing_key);
-            channel.QueueBind(queue: queueName, exchange: consumer_exchange_key, routingKey: update_item_routing_key);
+            channel.QueueBind(queue: newItemQueueName, exchange: consumer_exchange_key, routingKey: new_item_routing_key);
+            channel.QueueBind(queue: updateItemQueueName, exchange: consumer_exchange_key, routingKey: update_item_routing_key);
+
+            _logger.LogInformation($"Bound queue '{newItemQueueName}' to exchange '{consumer_exchange_key}' with routing keys '{new_item_routing_key}'");
+            _logger.LogInformation($"Bound queue '{updateItemQueueName}' to exchange '{consumer_exchange_key}' with routing keys '{update_item_routing_key}'");
 
             //TODO: make async consumers
 
             // Add cosumer when adding the new item
             new_item_consumer = new EventingBasicConsumer(channel);
             new_item_consumer.Received += OnNewItemRecived;
-            channel.BasicConsume(queue: queueName, autoAck: true, consumer: new_item_consumer);
+            channel.BasicConsume(queue: newItemQueueName, autoAck: true, consumer: new_item_consumer);
+
+            _logger.LogInformation($"Added consumer for new items to queue '{newItemQueueName}'");
 
             // Add consumer to update exist item
             update_item_consumer = new EventingBasicConsumer(channel);
             update_item_consumer.Received += OnUpdateItemRecived;
-            channel.BasicConsume(queue: queueName, autoAck: true, consumer: update_item_consumer);
+            channel.BasicConsume(queue: updateItemQueueName, autoAck: true, consumer: update_item_consumer);
+
+            _logger.LogInformation($"Added consumer for updates to queue '{updateItemQueueName}'");
 
 
         }
@@ -93,6 +103,10 @@ namespace DataConsumer
 
         private void OnNewItemRecived(object? sender, BasicDeliverEventArgs e)
         {
+
+            var routingKey = e.RoutingKey;
+            _logger.LogInformation($"Received message with routing key '{routingKey}' for new item");
+
             string message = Encoding.UTF8.GetString(e.Body.ToArray());
             _logger.LogInformation("On new item recived message: {msg}", message);
 
@@ -147,6 +161,8 @@ namespace DataConsumer
 
         private void OnUpdateItemRecived(object? sender, BasicDeliverEventArgs e)
         {
+            var routingKey = e.RoutingKey;
+            _logger.LogInformation($"Received message with routing key '{routingKey}' for update");
             string message = Encoding.UTF8.GetString(e.Body.ToArray());
 
             //TODO: test

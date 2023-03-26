@@ -16,7 +16,7 @@ namespace DTO.GraphQL
         public ICollection<SubscriptionQL> Subscriptions { get; set; }
     }
     public record LoginUserQLInput(string Username, string Password);
-    public record LoginUserQLPayload(string Username, bool is_login,string token);
+    public record LoginUserQLPayload(string Username, bool is_login);
     public record CreateUserQLInput(string Username, string Password);
     public record UserQLInput(long UserId, string Username, byte[] Password);
     public record UserQLPayload(long UserId, string Username, ICollection<SubscriptionQL>? Subscriptions);

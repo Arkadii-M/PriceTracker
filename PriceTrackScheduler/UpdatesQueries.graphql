@@ -1,0 +1,10 @@
+﻿query CheckForUpdates($curr_dt: DateTime){
+  updates(where:{toCheck: {lte: $curr_dt}}){
+     subscription {
+       product {
+        productId
+         link
+       }
+     }
+  }
+}

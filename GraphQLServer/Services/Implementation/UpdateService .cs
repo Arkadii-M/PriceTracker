@@ -39,7 +39,18 @@ namespace GraphQLServer.Services
 
         public IQueryable<UpdateQLPayload> GetAllUpdates()
         {
-            return _mapper.ProjectTo<UpdateQLPayload>(_dbContext.Updates.AsQueryable());
+            //var to_ret = _dbContext.Updates.Include(h => h.History).Include(s => s.Subscription);
+            //return _mapper.Map<IQueryable<UpdateQLPayload>>(to_ret);
+            var updates = _dbContext.Updates.Include(h => h.History).Include(s => s.Subscription).ThenInclude(p => p.Product);
+
+            List<UpdateQLPayload> res = new List<UpdateQLPayload>();
+            foreach(var up in updates)
+            {
+                res.Add(_mapper.Map<UpdateQLPayload>(up));
+            }
+            return res.AsQueryable();
+            
+            //return _mapper.Map<IQueryable<UpdateQLPayload>>(to_ret);
         }
 
         public void RemoveUpdate(long id)

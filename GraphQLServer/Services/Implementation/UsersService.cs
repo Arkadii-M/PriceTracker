@@ -2,6 +2,8 @@
 using DTO.GraphQL;
 using GraphQLServer.DbModels;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace GraphQLServer.Services
 {
@@ -18,7 +20,16 @@ namespace GraphQLServer.Services
 
         public UserQLPayload CreateUser(CreateUserQLInput user)
         {
-            throw new NotImplementedException();
+            Guid salt = Guid.NewGuid();
+            var user_db = new User
+            {
+                Username = user.Username,
+                Password = hash(user.Password, salt.ToString()),
+                Salt = salt.ToString()
+            };
+            _dbContext.Users.Add(user_db);
+            _dbContext.SaveChanges();
+            return _mapper.Map<UserQLPayload>(user_db);
         }
 
         public ValueTask DisposeAsync()
@@ -28,7 +39,13 @@ namespace GraphQLServer.Services
 
         public IQueryable<UserQLPayload> GetAll()
         {
-            return _mapper.ProjectTo<UserQLPayload>(_dbContext.Users.AsQueryable());
+            var users = _dbContext.Users.Include(i => i.Subscriptions).ThenInclude(p => p.Product);
+            List<UserQLPayload> res = new List<UserQLPayload>();
+            foreach (var user in users)
+                res.Add(_mapper.Map<UserQLPayload>(user));
+
+            return res.AsQueryable();
+            //return _mapper.ProjectTo<UserQLPayload>(_dbContext.Users.Include(i => i.Subscriptions).ThenInclude(p => p.Product).AsQueryable());
         }
 
         public UserQLPayload GetUserById(long id)
@@ -40,7 +57,23 @@ namespace GraphQLServer.Services
 
         public LoginUserQLPayload LoginUser(LoginUserQLInput user_data)
         {
-            return new LoginUserQLPayload(user_data.Username, true, "jwt_token");
+
+            var user = _dbContext.Users.FirstOrDefault(u => u.Username == user_data.Username);
+            if (user is null)
+                return new LoginUserQLPayload(user_data.Username, false);
+
+            if(user.Password.SequenceEqual(hash(user_data.Password, user.Salt)))
+                return new LoginUserQLPayload(user_data.Username, true);
+
+
+            return new LoginUserQLPayload(user_data.Username, false);
+        }
+
+
+        private byte[] hash(string password, string salt)
+        {
+            var alg = SHA512.Create();
+            return alg.ComputeHash(Encoding.UTF8.GetBytes(password + salt));
         }
     }
 }

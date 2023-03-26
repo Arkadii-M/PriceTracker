@@ -19,7 +19,7 @@ services:
     container_name: graph-ql-server
     image: ${DOCKER_REGISTRY-}graphqlserver
     ports:
-      - "8080:80"
+      - "80"
     networks:
       backend_net:
         ipv4_address: 192.168.0.2
@@ -30,6 +30,12 @@ services:
       dockerfile: GraphQLServer/Dockerfile
     depends_on:
       - ms_sql
+    healthcheck:
+      test: curl --fail http://192.168.0.2:80/healthcheck || exit 1
+      interval: 30s
+      retries: 3
+      timeout: 10s
+      start_period: 1m
       
   ms_sql:
    image: mcr.microsoft.com/mssql/server:2022-latest
@@ -95,4 +101,63 @@ services:
     depends_on:
       - rabbit_mq
       - graphqlserver
+
+
+  pricetrackscheduler:
+    image: ${DOCKER_REGISTRY-}pricetrackscheduler
+    networks:
+      backend_net:
+       ipv4_address: 192.168.0.7
+
+    build:
+      context: .
+      dockerfile: PriceTrackScheduler/Dockerfile
+    environment:
+      RabbitMqHost: "192.168.0.5"
+      ParserExchangeKey: "PARSER"
+      ParserUpdateRouteKey: "UPDATE_ITEM"
+      WaitMilliseconds: "60000"
+      GraphQlServerAddress: "http://192.168.0.2:80/graphql"
+    depends_on:
+      - rozetkaparserservice
+      - rabbit_mq
+      - dataconsumer
+      - graphqlserver
+
+  api:
+    image: ${DOCKER_REGISTRY-}api
+    networks:
+      backend_net:
+        ipv4_address: 192.168.0.8
+    ports:
+      - "60136:443"
+    build:
+      context: .
+      dockerfile: Api/Dockerfile
+    environment:
+      GraphQlServerAddress: "http://192.168.0.2:80/graphql"
+      JWT_AUTH_ISSUER: "JWT_AUTH_ISSUER"
+      JWT_AUTH_AUDIENCE: "JWT_AUTH_AUDIENCE"
+      JWT_AUTH_KEY: "JWT_AUTH_KEY_LONG_ENOUGH_LONGER_IS_BETTER"
+    depends_on:
+      - graphqlserver
+
+  #pricetrackerweb:
+  #  image: ${DOCKER_REGISTRY-}pricetrackerweb
+  #  networks:
+  #    backend_net:
+  #      ipv4_address: 192.168.0.9
+  #  ports:
+  #    - "80"
+  #  build:
+  #    context: .
+  #    dockerfile: PriceTrackerWeb/Dockerfile
+  #  environment:
+  #    GraphQlServerAddress: "http://192.168.0.2:80/graphql"
+  #    JWT_AUTH_ISSUER: "JWT_AUTH_ISSUER"
+  #    JWT_AUTH_AUDIENCE: "JWT_AUTH_AUDIENCE"
+  #    JWT_AUTH_KEY: "JWT_AUTH_KEY_LONG_ENOUGH_LONGER_IS_BETTER"
+  #  depends_on:
+  #    - graphqlserver
+
 

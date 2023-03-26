@@ -1,0 +1,79 @@
+query GetSubscriptionById($id : Long!)
+{
+  subscription(id: $id) {
+    userId
+    productId
+    checkMinutes
+    product {
+      productId
+      link
+      name
+      sellerId
+    }
+  }
+  update(id: $id) {
+    history {
+      historyId
+      productId
+      datetime
+      price
+      inStock
+    }
+  }
+},
+query GetSubsriptionsLastUpdates($sub_ids : [Long!]!)
+{
+  updates(where: {subscriptionId: {in: $sub_ids}}){
+    history {
+      historyId
+      productId
+      datetime
+      price
+      inStock
+      product {
+        productId
+        link
+        name
+        sellerId
+      }
+    }
+  }
+}
+
+query GetUserSubscriprions($user_id: Long!)
+{
+  subscriptions(where: {userId: {eq:$user_id}})
+  {
+    subscriptionId
+    userId
+    productId
+    checkMinutes
+    product {
+      productId
+      link
+      name
+      sellerId
+    }
+  }
+}
+
+mutation AddSubscription($add_sub : SubscriptionQLInput!)
+{
+  addSubscription(subscription: $add_sub) {
+    subscriptionId
+    userId
+    productId
+    checkMinutes
+  }
+}
+
+mutation updateSubscription($update_sub: SubscriptionQLUpdateInput!)
+{
+  updateSubscription(subscription: $update_sub) {
+    subscriptionId
+    userId
+    productId
+    checkMinutes
+  }
+}
+

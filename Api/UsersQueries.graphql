@@ -1,0 +1,33 @@
+query LoginUser($user: LoginUserQLInput!)
+{
+  loginUser(user_data:$user) {
+    username
+    is_login
+  }
+}
+
+query GetAllUsers
+{
+  users
+  {
+    userId
+    username
+  }
+}
+
+query GetUserById($id: Long!)
+{
+  users(where: {userId:{eq:$id}})
+  {
+    userId
+    username
+  }
+}
+
+mutation AddUser($user: CreateUserQLInput!)
+{
+  addUser(user: $user) {
+    userId
+    username
+  }
+}
