@@ -25,6 +25,9 @@ services:
         ipv4_address: 192.168.0.2
     environment:
       PriceTracker_ConnectionString: "Server=ms_sql;Database=PriceTracker;User=sa;Password=ms_sql_ROOT_password_25662735;"
+      JWT_AUTH_ISSUER: "JWT_AUTH_ISSUER"
+      JWT_AUTH_AUDIENCE: "JWT_AUTH_AUDIENCE"
+      JWT_AUTH_KEY: "JWT_AUTH_KEY_LONG_ENOUGH_LONGER_IS_BETTER"
     build:
       context: .
       dockerfile: GraphQLServer/Dockerfile
@@ -47,6 +50,7 @@ services:
    environment:
     ACCEPT_EULA: "Y"
     MSSQL_SA_PASSWORD: ms_sql_ROOT_password_25662735
+    TZ: Europe/Kiev
    volumes:
       - "./data/:/var/opt/mssql/data/"
       - "./log/:/var/opt/mssql/log/"
@@ -130,7 +134,7 @@ services:
       backend_net:
         ipv4_address: 192.168.0.8
     ports:
-      - "60136:443"
+      - "62136:443"
     build:
       context: .
       dockerfile: Api/Dockerfile
@@ -139,6 +143,12 @@ services:
       JWT_AUTH_ISSUER: "JWT_AUTH_ISSUER"
       JWT_AUTH_AUDIENCE: "JWT_AUTH_AUDIENCE"
       JWT_AUTH_KEY: "JWT_AUTH_KEY_LONG_ENOUGH_LONGER_IS_BETTER"
+      RabbitMqHost: "192.168.0.5"
+      NewItemRoutingKey: "NEW_ITEM"
+      ParserExchangeKey: "PARSER"
+    profiles:
+      - donotstart
+
     depends_on:
       - graphqlserver
 

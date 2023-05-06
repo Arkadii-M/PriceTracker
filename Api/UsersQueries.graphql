@@ -1,6 +1,7 @@
 query LoginUser($user: LoginUserQLInput!)
 {
   loginUser(user_data:$user) {
+    userId
     username
     is_login
   }

@@ -1,0 +1,14 @@
+query GetAllSellers{
+  sellers{
+    sellerId
+    sellerName
+  }
+}
+
+query GetSellerById($id : Long!)
+{
+  seller(id: $id) {
+    sellerId
+    sellerName
+  }
+}

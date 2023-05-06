@@ -13,8 +13,6 @@ namespace DTO.Api
         public long UserId { get; set; }
         public long ProductId { get; set; }
         public int CheckMinutes { get; set; }
-
-
-        public Product? Product { get; set; }
     }
+    public record AddSubscription(string Url, int CheckMinutes);
 }

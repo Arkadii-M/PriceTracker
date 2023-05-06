@@ -4,6 +4,10 @@ using GraphQLServer.DbModels;
 using GraphQLServer.Services;
 using System.Reflection;
 using GraphQLServer.MapperProfiles;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using GraphQLServer.Helper;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +20,43 @@ var profiles = new List<AutoMapper.Profile>()
     new UpdateProfile(),
     new UserProfile()
 };
+
+
+// Add auth
+
+//var signingKey = new SymmetricSecurityKey(
+//    Encoding.UTF8.GetBytes("MySuperSecretKey"));
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = AuthHelper.Issuer,
+
+            ValidateAudience = true,
+            ValidAudience = AuthHelper.Audience,
+
+            ValidateLifetime = false,
+            IssuerSigningKey = AuthHelper.GetSymmetricSecurityKey(),
+
+            ValidateIssuerSigningKey = true,
+        };
+    });
+builder.Services.AddAuthorization();
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(options =>
+//    {
+//        options.TokenValidationParameters =
+//            new TokenValidationParameters
+//            {
+//                ValidIssuer = "https://auth.chillicream.com",
+//                ValidAudience = "https://graphql.chillicream.com",
+//                ValidateIssuerSigningKey = true,
+//                IssuerSigningKey = signingKey,
+//                ValidateLifetime = false,
+//            };
+//    });
 
 
 //builder.Services.AddHealthChecks();
@@ -32,6 +73,7 @@ builder.Services
     .AddDbContextFactory<PriceTrackerContext>()
     .AddAutoMapper(config => config.AddProfiles(profiles))
     .AddGraphQLServer()
+    .AddAuthorization()
     .RegisterDbContext<PriceTrackerContext>(DbContextKind.Synchronized)
     .RegisterService<IHistoryService>()
     .RegisterService<IProductService>()
@@ -45,10 +87,12 @@ builder.Services
 
 var app = builder.Build();
 
-
 app.MapGet("/", () => "GraphQl is avaliable at /graphql");
 app.MapGet("/healthcheck", () => "Ok");
 //app.MapHealthChecks("/healthcheck");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapGraphQL();
 

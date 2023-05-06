@@ -16,9 +16,11 @@
     <PackageReference Include="GraphQL" Version="7.2.2" />
     <PackageReference Include="GraphQL.SystemTextJson" Version="7.2.2" />
     <PackageReference Include="HotChocolate.AspNetCore" Version="13.0.4" />
+    <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="13.0.4" />
     <PackageReference Include="HotChocolate.Data.EntityFramework" Version="13.0.4" />
     <PackageReference Include="HotChocolate.Types" Version="13.0.4" />
     <PackageReference Include="HotChocolate.Types.Selections" Version="10.5.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>

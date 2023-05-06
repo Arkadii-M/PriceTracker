@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using DTO.GraphQL;
 using GraphQLServer.DbModels;
+using GraphQLServer.Helper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -57,16 +61,37 @@ namespace GraphQLServer.Services
 
         public LoginUserQLPayload LoginUser(LoginUserQLInput user_data)
         {
-
             var user = _dbContext.Users.FirstOrDefault(u => u.Username == user_data.Username);
+            
             if (user is null)
-                return new LoginUserQLPayload(user_data.Username, false);
+                return new LoginUserQLPayload(-1,user_data.Username,"", false);
+
+
+
+
 
             if(user.Password.SequenceEqual(hash(user_data.Password, user.Salt)))
-                return new LoginUserQLPayload(user_data.Username, true);
+            {
+                var claims = new List<Claim> {
+                    new Claim("id",user.UserId.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username)
+                };
+                claims.Add(new Claim(ClaimTypes.Role, "user"));
+                var jwt = new JwtSecurityToken(
+                               issuer: AuthHelper.Issuer,
+                               audience: AuthHelper.Audience,
+                               claims: claims,
+                               expires: DateTime.Now.AddMinutes(AuthHelper.TokenLifetime),
+                               signingCredentials: new Microsoft.IdentityModel.Tokens.SigningCredentials(
+                                   AuthHelper.GetSymmetricSecurityKey(),
+                                   SecurityAlgorithms.HmacSha256
+                                   ));
+
+                return new LoginUserQLPayload(user.UserId, user_data.Username, new JwtSecurityTokenHandler().WriteToken(jwt), true);
+            }
 
 
-            return new LoginUserQLPayload(user_data.Username, false);
+            return new LoginUserQLPayload(user.UserId,user_data.Username,"", false);
         }
 
 

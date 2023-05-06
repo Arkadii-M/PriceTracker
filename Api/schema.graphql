@@ -301,6 +301,7 @@ type UserQLPayload {
 }
 
 type LoginUserQLPayload {
+  userId: Long!
   username: String!
   is_login: Boolean!
 }

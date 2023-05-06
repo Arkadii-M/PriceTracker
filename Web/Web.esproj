@@ -12,6 +12,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\app\dto\" />
+    <Folder Include="src\app\guards\" />
+    <Folder Include="src\app\login\" />
+    <Folder Include="src\app\register\" />
     <Folder Include="src\app\services\" />
+    <Folder Include="src\app\user\login\" />
+    <Folder Include="src\app\user\subscriptionInfo\" />
+    <Folder Include="src\app\user\subscriptions\" />
+    <Folder Include="src\app\user\register\" />
   </ItemGroup>
 </Project>

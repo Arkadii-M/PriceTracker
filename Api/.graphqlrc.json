@@ -4,7 +4,7 @@
   "extensions": {
     "strawberryShake": {
       "name": "PriceTrackerClient",
-      "url": "https://localhost:7160/graphql",
+      "url": "http://localhost:56928/graphql",
       "records": {
         "inputs": false,
         "entities": false

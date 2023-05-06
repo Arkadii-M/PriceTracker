@@ -1,0 +1,70 @@
+<p-table [value]="products" [tableStyle]="{'min-width': '60rem'}">
+  <ng-template pTemplate="caption">
+    <div class="flex align-items-center justify-content-between">
+      Subscriptions
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Name</th>
+      <th>Seller</th>
+      <th>Last Price</th>
+      <th>In Stock</th>
+      <th>Check time (minutes)</th>
+      <th>Price history</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-product>
+    <tr>
+      <td><a [href]="product.link" target="_blank">{{product.name}}</a></td>
+      <td>{{product.seller.sellerName}}</td>
+      <td>{{product.lastPrice}} ₴</td>
+      <td><p-tag [value]="getInStockName(product.inStock)" [severity]="getSeverity(product.inStock)"></p-tag></td>
+      <td>{{getUpdatePeriod(product)}}</td>
+      <td><button pButton pRipple type="button" (click)="showChart(product)" class="p-button-rounded">View</button></td>
+    </tr>
+  </ng-template>
+</p-table>
+
+
+<p-dialog header="Header" [(visible)]="chart_visible" [style]="{ width: '100vw' }">
+  <ng-template pTemplate="header">
+    <span class="text-xl font-bold">{{dialog_header}}</span>
+  </ng-template>
+  <div>
+    <p-chart type="line" [data]="basicData" [options]="basicOptions"></p-chart>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button icon="pi pi-check" (click)="chart_visible = false" label="Close" styleClass="p-button-text"></p-button>
+  </ng-template>
+</p-dialog>
+
+<p-toolbar styleClass="mb-4 gap-2">
+  <ng-template pTemplate="left">
+    <button pButton pRipple label="Add subscription" icon="pi pi-plus" class="p-button-success mr-2" (click)="openAddSubscription()"></button>
+  </ng-template>
+</p-toolbar>
+
+
+
+<p-dialog [(visible)]="add_dialog_visible" [style]="{width: '450px'}" header="Add details" [modal]="true" styleClass="p-fluid">
+  <ng-template pTemplate="content">
+
+    <div class="field">
+      <label for="name">Type url (Rozetka)</label>
+      <input type="text" pInputText id="name" [(ngModel)]="newSub.url" required autofocus />
+      <small class="p-error" *ngIf="add_dialog_submitted && !newSub.url">Url is required.</small>
+    </div>
+    <div class="field">
+      <label for="name">Check period(minutes)</label>
+      <input type="text" pInputText id="check_time" [(ngModel)]="newSub.checkMinutes" required autofocus />
+      <small class="p-error" *ngIf="add_dialog_submitted && !newSub.checkMinutes">Check period is required.</small>
+    </div>
+
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Close" icon="pi pi-times" class="p-button-text" (click)="closeAddSubscription()"></button>
+    <button pButton pRipple label="Add" icon="pi pi-check" class="p-button-text" (click)="addSubscription()"></button>
+  </ng-template>
+</p-dialog>

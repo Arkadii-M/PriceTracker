@@ -15,25 +15,25 @@ public static class UserEndpoints
 {
     public static void MapUserEndpoints (this IEndpointRouteBuilder routes)
     {
-        routes.MapGet("/api/User", async ([FromServices] IPriceTrackerClient client) =>
-        {
-            var result = await client.GetAllUsers.ExecuteAsync();
-            result.EnsureNoErrors();
-            return result.Data.Users;
-        })
-        .WithName("GetAllUsers").RequireAuthorization();
+        //routes.MapGet("/api/User", async ([FromServices] IPriceTrackerClient client) =>
+        //{
+        //    var result = await client.GetAllUsers.ExecuteAsync();
+        //    result.EnsureNoErrors();
+        //    return result.Data.Users;
+        //})
+        //.WithName("GetAllUsers").RequireAuthorization();
 
-        routes.MapGet("/api/User/{id}", async (int id, [FromServices] IPriceTrackerClient client) =>
-        {
-            var user_payload = await client.GetUserById.ExecuteAsync(id);
-            user_payload.EnsureNoErrors();
-            var user = user_payload.Data.Users.FirstOrDefault();
-            if (user == null)
-                return Results.NotFound();
+        //routes.MapGet("/api/User/{id}", async (int id, [FromServices] IPriceTrackerClient client) =>
+        //{
+        //    var user_payload = await client.GetUserById.ExecuteAsync(id);
+        //    user_payload.EnsureNoErrors();
+        //    var user = user_payload.Data.Users.FirstOrDefault();
+        //    if (user == null)
+        //        return Results.NotFound();
 
-            return Results.Ok(new { UserId = user.UserId, Username = user.Username });
-        })
-        .WithName("GetUserById").RequireAuthorization();
+        //    return Results.Ok(new { UserId = user.UserId, Username = user.Username });
+        //})
+        //.WithName("GetUserById").RequireAuthorization();
 
         //routes.MapPut("/api/User/{id}", (int id, User input) =>
         //{
@@ -41,7 +41,7 @@ public static class UserEndpoints
         //})
         //.WithName("UpdateUser");
 
-        routes.MapPost("/api/User/", async (User model, [FromServices] IPriceTrackerClient client) =>
+        routes.MapPost("/api/User/", async ([FromBody] User model, [FromServices] IPriceTrackerClient client) =>
         {
             var add_user = await client.AddUser.ExecuteAsync(new CreateUserQLInput() { Username = model.Username, Password = model.Password });
             add_user.EnsureNoErrors();
@@ -50,21 +50,17 @@ public static class UserEndpoints
         })
         .WithName("CreateUser");
 
-        //routes.MapDelete("/api/User/{id}", (int id) =>
-        //{
-        //    //return Results.Ok(new User { ID = id });
-        //})
-        //.WithName("DeleteUser");
-
         routes.MapPost("/api/User/login", async ([FromBody] User user, [FromServices] IPriceTrackerClient client) =>
         {
             //TODO: check user and password
             var response = await client.LoginUser.ExecuteAsync(new LoginUserQLInput() { Username = user.Username, Password = user.Password });
             response.EnsureNoErrors();
-
-            if(response.Data.LoginUser.Is_login)
+            if (response.Data.LoginUser.Is_login)
             {
-                var claims = new List<Claim> { new Claim(ClaimTypes.Name, user.Username) };
+                var claims = new List<Claim> { 
+                    new Claim("id",response.Data.LoginUser.UserId.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username)
+                };
                 claims.Add(new Claim(ClaimTypes.Role, "user"));
 
                 var jwt = new JwtSecurityToken(

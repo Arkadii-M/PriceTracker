@@ -1,6 +1,7 @@
 ﻿using Api;
 using Api.Controllers;
 using Api.Helpers;
+using Api.Helpers.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
 
@@ -48,6 +49,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
         };
     });
+
+
+var host_name = Environment.GetEnvironmentVariable("RabbitMqHost") ?? throw new ArgumentException("Missing env var: RabbitMqHost");
+var parser_exchange_key = Environment.GetEnvironmentVariable("ParserExchangeKey") ?? throw new ArgumentException("Missing env var: ParserExchangeKey");
+var new_item_routing_key = Environment.GetEnvironmentVariable("NewItemRoutingKey") ?? throw new ArgumentException("Missing env var: NewItemRoutingKey");
+
+builder.Services.AddSingleton<IRabbitMqClient>(impl => new RabbitMqClient(host_name,parser_exchange_key, new_item_routing_key));
 
 
 // Add graphQl client

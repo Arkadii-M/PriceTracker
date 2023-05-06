@@ -9,6 +9,7 @@ namespace GraphQLServer.Services
         SubscriptionQLPayload GetSubscriptionById(long id);
         SubscriptionQLPayload UpdateSubscription(SubscriptionQLUpdate subscription);
         IQueryable<SubscriptionQLPayload> GetAllSubscriptions();
+        IQueryable<SubscriptionQLPayload> GetAllSubscriptionsForUserId(long id);
         void RemoveSubscription(long id);
     }
 }

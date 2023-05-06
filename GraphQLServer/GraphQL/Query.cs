@@ -3,7 +3,9 @@ using DTO.GraphQL;
 using GraphQLServer.DbModels;
 using GraphQLServer.Services;
 using HotChocolate;
+using HotChocolate.Authorization;
 using HotChocolate.Types;
+using System.Security.Claims;
 using UseFilteringAttribute = HotChocolate.Data.UseFilteringAttribute;
 
 namespace GraphQLServer.GraphQL
@@ -22,9 +24,14 @@ namespace GraphQLServer.GraphQL
         public IQueryable<HistoryQLPayload> GetAllHistories(IHistoryService serivice) => serivice.GetAllHistories();
 
 
+        [GraphQLName("productHistory")]
+        public IQueryable<HistoryQLPayload> GetProductHistory(long productId,IHistoryService serivice) => serivice.GetAllHistoryForProductId(productId);
+
+
+
         // Product queries
         [GraphQLName("product")]
-        public ProductQLPayload GetProductById(long id,IProductService service) => service.GetProductById(id);
+        public ProductQLPayload GetProductById(long id, IProductService service) => service.GetProductById(id);
 
         [UseFiltering]
         [GraphQLName("products")]
@@ -47,6 +54,15 @@ namespace GraphQLServer.GraphQL
         [GraphQLName("subscriptions")]
         public IQueryable<SubscriptionQLPayload> GetAllSubscriptions(ISubscriptionService service) => service.GetAllSubscriptions();
 
+        [Authorize]
+        [GraphQLName("userSubscriptions")]
+        public IQueryable<SubscriptionQLPayload> GetUserSubscriptions(ClaimsPrincipal claimsPrincipal, ISubscriptionService service)
+        {
+            var id = Convert.ToInt64(claimsPrincipal.FindFirstValue("id"));
+            return service.GetAllSubscriptionsForUserId(id);
+        }
+
+
         // Updates queries
         [GraphQLName("update")]
         public UpdateQLPayload GetUpdateById(long id, IUpdateService service) => service.GetUpdateById(id);
@@ -64,6 +80,16 @@ namespace GraphQLServer.GraphQL
 
         [GraphQLName("loginUser")]
         public LoginUserQLPayload LoginUser(LoginUserQLInput user_data, IUserService service) => service.LoginUser(user_data);
+
+        [Authorize]
+        [GraphQLName("getMe")]
+        public LoginUserQLPayload GetMe(ClaimsPrincipal claimsPrincipal)
+        {
+            var id = claimsPrincipal.FindFirstValue("id");
+            var name = claimsPrincipal.FindFirstValue(ClaimTypes.Name);
+
+            return new LoginUserQLPayload(Convert.ToInt64(id?? "0"), name ?? "none", "none", true);
+        }
 
 
     }

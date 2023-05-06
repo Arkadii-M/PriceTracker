@@ -68,5 +68,13 @@ namespace GraphQLServer.Services
             }
             return _mapper.Map< SubscriptionQLPayload>(sub_db);
         }
+
+        public IQueryable<SubscriptionQLPayload> GetAllSubscriptionsForUserId(long id)
+        {
+            return _mapper.ProjectTo<SubscriptionQLPayload>(_dbContext.Subscriptions.Where(s => s.UserId == id)
+                .Include(s => s.User)
+                .Include(s => s.Product)
+                .ThenInclude(p => p.Seller).AsQueryable());
+        }
     }
 }

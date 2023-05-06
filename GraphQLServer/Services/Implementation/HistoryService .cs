@@ -50,5 +50,10 @@ namespace GraphQLServer.Services
                 _dbContext.SaveChanges();
             }
         }
+
+        public IQueryable<HistoryQLPayload> GetAllHistoryForProductId(long id)
+        {
+            return _mapper.ProjectTo<HistoryQLPayload>(_dbContext.Histories.Where(h => h.ProductId == id).AsQueryable());
+        }
     }
 }
