@@ -115,8 +115,15 @@ namespace RozetkaParserService
             RozetkaPageResult out_info;
             var product_input = JsonConvert.DeserializeObject<RozetkaParseInput>(Encoding.UTF8.GetString(e.Body.ToArray()));
 
-
-            ParseProduct(product_input, out out_info);
+            try
+            {
+                ParseProduct(product_input, out out_info);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return;
+            }
 
             out_info.id = product_input.id; // save the id
             out_info.url = product_input.url;

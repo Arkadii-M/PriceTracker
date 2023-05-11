@@ -50,5 +50,12 @@ namespace GraphQLServer.Services
                 _dbContext.SaveChanges();
             }
         }
+
+        public ProductQLPayload? GetProductByLink(string link)
+        {
+            return _mapper.Map<ProductQLPayload>(_dbContext.Products
+                .Include(p => p.Seller)
+                .FirstOrDefault(p => p.Link == link));
+        }
     }
 }

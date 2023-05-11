@@ -53,15 +53,16 @@ namespace PriceTrackScheduler
         private void CheckProductsToUpdate()
         {
             _logger.LogInformation("CheckProductsToUpdate is called");
-            var task = _priceTrackerClient.CheckForUpdates.ExecuteAsync(DateTime.Now);
+            var task = _priceTrackerClient.CheckForUpdates.ExecuteAsync(DateTime.UtcNow.AddHours(3));// TODO: Use timezone
             task.Wait();
             var products_to_update = task.Result;
             products_to_update.EnsureNoErrors();
 
-
-            foreach(var element in products_to_update.Data.Updates)
+            _logger.LogInformation("Num of elements for update {num},Datetime: {dt}", products_to_update.Data.Updates.Count, DateTime.UtcNow.AddHours(3));
+            foreach (var element in products_to_update.Data.Updates)
             {
                 var product = element.Subscription.Product;
+                _logger.LogInformation("Check updates for product {link}",product.Link);
                 channel.BasicPublish(
                     exchange: parser_exchange_key,
                     routingKey: String.Empty,

@@ -35,13 +35,17 @@ export class SubscriptionsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.subService.getUserSubscriptions().subscribe(res => {
+      console.log(res);
+      console.log(res[0].checkMinutes);
+
       this.subscriptions = res;
-      console.log(this.subscriptions);
-      this.subscriptions.forEach((val, id) =>
-      {
-        this.productService.getById(val.productId).subscribe(prod => { this.products.push(prod); }, err => console.log(err));
+
+      let product_ids = res.map(obj => obj.productId);
+      console.log(product_ids);
+      this.productService.getByIds(product_ids).subscribe(res => {
+        console.log(res);
+        this.products = res;
       });
     }, err => { console.error(err); })
 
@@ -61,8 +65,7 @@ export class SubscriptionsComponent implements OnInit {
     console.log(this.newSub);
     this.add_dialog_visible = false;
     this.add_dialog_submitted = true;
-    this.subService.addSubscription(this.newSub)
-      .subscribe(res => console.log(res), err => console.error(err));
+    this.subService.addSubscription(this.newSub.url, this.newSub.checkMinutes);
   }
 
 
@@ -76,19 +79,21 @@ export class SubscriptionsComponent implements OnInit {
     return this.subscriptions.find((val) => val.productId == product.productId)?.checkMinutes;
   }
 
+
+
+
   showChart(product: Product): void {
 
     this.dialog_header = product.name;
     this.chart_visible = true;
     var price_hist: [number?] = [];
     var datetime_hist: [Date?] = [];
-    product.history?.forEach((value) => {
+    product.histories?.forEach((value) => {
       price_hist.push(value.price);
       datetime_hist.push(value.datetime);
     });
     this.basicData = {
       labels: datetime_hist,
-/*      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],*/
       datasets: [
         {
           label: 'Price',

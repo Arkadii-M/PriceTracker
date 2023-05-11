@@ -21,5 +21,6 @@ namespace DTO.GraphQL
     public record SubscriptionQLUpdate(long SubscriptionId,long UserId, long ProductId, int CheckMinutes);
     
     public record SubscriptionQLInput(long UserId, long ProductId, int CheckMinutes);
+    public record SubscriptionByLinkQLInput(string link, int CheckMinutes);
     public record SubscriptionQLPayload : SubscriptionQL;
 }

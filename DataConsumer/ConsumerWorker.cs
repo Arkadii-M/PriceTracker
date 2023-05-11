@@ -103,106 +103,121 @@ namespace DataConsumer
 
         private void OnNewItemRecived(object? sender, BasicDeliverEventArgs e)
         {
-
-            var routingKey = e.RoutingKey;
-            _logger.LogInformation($"Received message with routing key '{routingKey}' for new item");
-
-            string message = Encoding.UTF8.GetString(e.Body.ToArray());
-            _logger.LogInformation("On new item recived message: {msg}", message);
-
-            var page_result = JsonConvert.DeserializeObject<RozetkaPageResult>(message);
-
-            if (page_result is null)
+            try
             {
-                _logger.LogError("Failed to parse message:\n{msg}", message);
-                return;
-            }
-            _logger.LogInformation(
-                "Recived item:\nTitle: {title}, price: {price}, datetime {datetime}, in stock: {in_stock}, seller name: {seller}",
-                page_result.product_title,
-                page_result.price,
-                page_result.datetime,
-                page_result.in_stock,
-                page_result.seller_name);
 
 
-            var sellers_payload = TaskWaitAndGetResult(_priceTrackerClient.GetAllSellers.ExecuteAsync());
+                var routingKey = e.RoutingKey;
+                _logger.LogInformation($"Received message with routing key '{routingKey}' for new item");
 
-            long seller_id;
-            var seller = sellers_payload.Data.Sellers.ToList().Find(s => s.SellerName == page_result.seller_name);
+                string message = Encoding.UTF8.GetString(e.Body.ToArray());
+                _logger.LogInformation("On new item recived message: {msg}", message);
 
-            if (seller is null) // If this seller is not exist, add to the database
-            {
-                var add_seller_payload = TaskWaitAndGetResult(_priceTrackerClient.AddSeller.ExecuteAsync(new SellerQLInput { SellerName = page_result.seller_name }));
-                seller_id = add_seller_payload.Data.AddSeller.SellerId;
-            }
-            else
-                seller_id = seller.SellerId;
+                var page_result = JsonConvert.DeserializeObject<RozetkaPageResult>(message);
 
-            var add_product_payload = TaskWaitAndGetResult(_priceTrackerClient.AddProduct.ExecuteAsync(new ProductQLInput { SellerId = seller_id, Name = page_result.product_title, Link = page_result.url }));
-
-
-
-            var add_history_payload = TaskWaitAndGetResult(_priceTrackerClient.AddHistory.ExecuteAsync(
-                new HistoryQLInput
+                if (page_result is null)
                 {
-                    ProductId = add_product_payload.Data.AddProduct.ProductId,
-                    Datetime = page_result.datetime,
-                    Price = page_result.price,
-                    InStock = page_result.in_stock
-                }));
+                    _logger.LogError("Failed to parse message:\n{msg}", message);
+                    return;
+                }
+                _logger.LogInformation(
+                    "Recived item:\nTitle: {title}, price: {price}, datetime {datetime}, in stock: {in_stock}, seller name: {seller}",
+                    page_result.product_title,
+                    page_result.price,
+                    page_result.datetime,
+                    page_result.in_stock,
+                    page_result.seller_name);
 
 
-            if (add_history_payload.IsSuccessResult())
-                _logger.LogInformation("Add history to DB with id {id}", add_history_payload.Data.AddHistory.HistoryId);
-            else
-                _logger.LogError("Failed to add data to DB: {error}", add_history_payload.Errors.ToString());
+                var sellers_payload = TaskWaitAndGetResult(_priceTrackerClient.GetAllSellers.ExecuteAsync());
+
+                long seller_id;
+                var seller = sellers_payload.Data.Sellers.ToList().Find(s => s.SellerName == page_result.seller_name);
+
+                if (seller is null) // If this seller is not exist, add to the database
+                {
+                    var add_seller_payload = TaskWaitAndGetResult(_priceTrackerClient.AddSeller.ExecuteAsync(new SellerQLInput { SellerName = page_result.seller_name }));
+                    seller_id = add_seller_payload.Data.AddSeller.SellerId;
+                }
+                else
+                    seller_id = seller.SellerId;
+
+                var add_product_payload = TaskWaitAndGetResult(_priceTrackerClient.AddProduct.ExecuteAsync(new ProductQLInput { SellerId = seller_id, Name = page_result.product_title, Link = page_result.url }));
+
+
+
+                var add_history_payload = TaskWaitAndGetResult(_priceTrackerClient.AddHistory.ExecuteAsync(
+                    new HistoryQLInput
+                    {
+                        ProductId = add_product_payload.Data.AddProduct.ProductId,
+                        Datetime = page_result.datetime,
+                        Price = page_result.price,
+                        InStock = page_result.in_stock
+                    }));
+
+
+                if (add_history_payload.IsSuccessResult())
+                    _logger.LogInformation("Add history to DB with id {id}", add_history_payload.Data.AddHistory.HistoryId);
+                else
+                    _logger.LogError("Failed to add data to DB: {error}", add_history_payload.Errors.ToString());
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
         }
 
         private void OnUpdateItemRecived(object? sender, BasicDeliverEventArgs e)
         {
-            var routingKey = e.RoutingKey;
-            _logger.LogInformation($"Received message with routing key '{routingKey}' for update");
-            string message = Encoding.UTF8.GetString(e.Body.ToArray());
+            try
+            {            
+                var routingKey = e.RoutingKey;
+                _logger.LogInformation($"Received message with routing key '{routingKey}' for update");
+                string message = Encoding.UTF8.GetString(e.Body.ToArray());
 
-            //TODO: test
+                //TODO: test
 
-            var page_result = JsonConvert.DeserializeObject<RozetkaPageResult>(message);
+                var page_result = JsonConvert.DeserializeObject<RozetkaPageResult>(message);
 
 
-            if (page_result is null)
-            {
-                _logger.LogError("Failed to parse message:\n{msg}", message);
-                return;
-            }
-            _logger.LogInformation(
-                "Recived item:\nTitle: {title}, price: {price}, datetime {datetime}, in stock: {in_stock}, seller name: {seller}",
-                page_result.product_title,
-                page_result.price,
-                page_result.datetime,
-                page_result.in_stock,
-                page_result.seller_name);
-
-            // Store to database
-            if (page_result.id is null)
-            {
-                _logger.LogError("Recived product id is null, but valid id expected.");
-                return;
-            }
-
-            var add_history_payload = TaskWaitAndGetResult(_priceTrackerClient.AddHistory.ExecuteAsync(
-                new HistoryQLInput
+                if (page_result is null)
                 {
-                    ProductId = page_result.id ?? default(long),
-                    Datetime = page_result.datetime,
-                    Price = page_result.price,
-                    InStock = page_result.in_stock
-                }));
+                    _logger.LogError("Failed to parse message:\n{msg}", message);
+                    return;
+                }
+                _logger.LogInformation(
+                    "Recived item:\nTitle: {title}, price: {price}, datetime {datetime}, in stock: {in_stock}, seller name: {seller}",
+                    page_result.product_title,
+                    page_result.price,
+                    page_result.datetime,
+                    page_result.in_stock,
+                    page_result.seller_name);
 
-            if (add_history_payload.IsSuccessResult())
-                _logger.LogInformation("Add history to DB with id {id}", add_history_payload.Data.AddHistory.HistoryId);
-            else
-                _logger.LogError("Failde to add data to DB: {error}", add_history_payload.Errors.ToString());
+                // Store to database
+                if (page_result.id is null)
+                {
+                    _logger.LogError("Recived product id is null, but valid id expected.");
+                    return;
+                }
+
+                var add_history_payload = TaskWaitAndGetResult(_priceTrackerClient.AddHistory.ExecuteAsync(
+                    new HistoryQLInput
+                    {
+                        ProductId = page_result.id ?? default(long),
+                        Datetime = page_result.datetime,
+                        Price = page_result.price,
+                        InStock = page_result.in_stock
+                    }));
+
+                if (add_history_payload.IsSuccessResult())
+                    _logger.LogInformation("Add history to DB with id {id}", add_history_payload.Data.AddHistory.HistoryId);
+                else
+                    _logger.LogError("Failde to add data to DB: {error}", add_history_payload.Errors.ToString());
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

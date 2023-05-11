@@ -28,20 +28,29 @@ services:
       JWT_AUTH_ISSUER: "JWT_AUTH_ISSUER"
       JWT_AUTH_AUDIENCE: "JWT_AUTH_AUDIENCE"
       JWT_AUTH_KEY: "JWT_AUTH_KEY_LONG_ENOUGH_LONGER_IS_BETTER"
+      RabbitMqHost: "192.168.0.5"
+      NewItemRoutingKey: "NEW_ITEM"
+      ParserExchangeKey: "PARSER"
+      RedisConnectionString: "192.168.0.9:6379"
     build:
       context: .
       dockerfile: GraphQLServer/Dockerfile
     depends_on:
       - ms_sql
+      - redis
     healthcheck:
       test: curl --fail http://192.168.0.2:80/healthcheck || exit 1
       interval: 30s
       retries: 3
       timeout: 10s
       start_period: 1m
-      
+
+
+
   ms_sql:
-   image: mcr.microsoft.com/mssql/server:2022-latest
+   #image: mcr.microsoft.com/mssql/server:2022-latest
+   image: mcr.microsoft.com/mssql/server:2019-CU14-ubuntu-20.04
+   user: root
    ports:
      - 1433:1433
    networks:
@@ -52,9 +61,21 @@ services:
     MSSQL_SA_PASSWORD: ms_sql_ROOT_password_25662735
     TZ: Europe/Kiev
    volumes:
-      - "./data/:/var/opt/mssql/data/"
-      - "./log/:/var/opt/mssql/log/"
-      - "./secrets/:/var/opt/mssql/secrets/"
+      - "./mssql/data/:/var/opt/mssql/data/"
+      - "./mssql/log/:/var/opt/mssql/log/"
+      - "./mssql/secrets/:/var/opt/mssql/secrets/"
+  redis:
+    image: redis:7.0.11-alpine
+    restart: always
+    ports:
+      - 6379:6379
+    #command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    command: redis-server --save 20 1 --loglevel warning
+    volumes: 
+      - "./cache/:/data/"
+    networks:
+      backend_net:
+        ipv4_address: 192.168.0.9
 
 
   rozetkaparserservice:
@@ -68,6 +89,7 @@ services:
       ConsumerExchangeKey: "CONSUMER"
       ParserExchangeKey: "PARSER"
       RabbitMqHost: "192.168.0.5"
+      TZ: Europe/Kiev
 
     build:
       context: .
@@ -151,6 +173,8 @@ services:
 
     depends_on:
       - graphqlserver
+
+
 
   #pricetrackerweb:
   #  image: ${DOCKER_REGISTRY-}pricetrackerweb

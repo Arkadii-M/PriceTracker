@@ -34,11 +34,12 @@ namespace RozetkaParserService
         }
         public string GetSellerName(uint wait_sec = 10)
         {
-            return new WebDriverWait(_driver, TimeSpan.FromSeconds(wait_sec))
-                .Until(drv => drv
-                .FindElement(By.ClassName("product-seller__title"))
-                .FindElement(By.CssSelector("rz-marketplace-link"))
-                .FindElement(By.ClassName("ng-star-inserted"))).Text;
+            //return new WebDriverWait(_driver, TimeSpan.FromSeconds(wait_sec))
+            //    .Until(drv => drv
+            //    .FindElement(By.ClassName("product-seller__title"))
+            //    .FindElement(By.CssSelector("rz-marketplace-link"))
+            //    .FindElement(By.ClassName("ng-star-inserted"))).Text;
+            return "Rozetka"; //TODO: check and change
         }
 
         public decimal GetPrice(uint wait_sec = 10)
@@ -64,7 +65,7 @@ namespace RozetkaParserService
         {
             return new RozetkaPageResult() 
             {
-                datetime = DateTime.Now,
+                datetime = DateTime.UtcNow.AddHours(3),
                 product_title = GetTitle(),
                 price = GetPrice(),
                 in_stock = IsInStock(),

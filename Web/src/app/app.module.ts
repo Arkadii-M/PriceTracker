@@ -31,6 +31,7 @@ import { config } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 
 import { LoginComponent } from './login/login.component';
+import { GraphQLModule } from './graphql.module';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import { LoginComponent } from './login/login.component';
       { path: 'login', component: LoginComponent },
 /*      { path: 'register', component: RegisterComponent },*/
       { path: 'subscriptions', component: SubscriptionsComponent, canActivate: [AuthenticationGuard] },
-    ])
+    ]),
+    GraphQLModule
   ],
   providers: [
     ProductService,
