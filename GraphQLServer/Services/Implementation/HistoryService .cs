@@ -33,7 +33,7 @@ namespace GraphQLServer.Services
 
         public HistoryQLPayload GetHistoryById(long id)
         {
-            return _mapper.Map<HistoryQLPayload>(_dbContext.Histories.FirstOrDefault(h => h.HistoryId == id));
+            return _mapper.Map<HistoryQLPayload>(_dbContext.Histories.Include(p => p.Product).Include(s => s.Product.Seller).FirstOrDefault(h => h.HistoryId == id));
         }
 
         public IQueryable<HistoryQLPayload> GetAllHistories()

@@ -17,6 +17,7 @@
     <Folder Include="src\app\register\" />
     <Folder Include="src\app\services\" />
     <Folder Include="src\app\user\login\" />
+    <Folder Include="src\app\user\push-notification\" />
     <Folder Include="src\app\user\subscriptionInfo\" />
     <Folder Include="src\app\user\subscriptions\" />
     <Folder Include="src\app\user\register\" />

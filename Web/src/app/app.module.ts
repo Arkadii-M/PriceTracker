@@ -29,18 +29,22 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { FormsModule } from '@angular/forms';
 import { config } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
+import { MessagesModule } from 'primeng/messages';
 
 import { LoginComponent } from './login/login.component';
 import { GraphQLModule } from './graphql.module';
+import { PushNotificationComponent } from './user/push-notification/push-notification/push-notification.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SubscriptionsComponent,
     LoginComponent,
+    PushNotificationComponent,
   ],
   imports: [
     BrowserModule,
+    MessagesModule,
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
